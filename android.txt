@@ -1,0 +1,4 @@
+#Kivy launcher
+title=KanjiOrigin
+author=NumesSanguis
+orientation=portrait
