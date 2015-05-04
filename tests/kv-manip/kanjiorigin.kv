@@ -1,0 +1,12 @@
+#:kivy 1.8.0
+
+BoxLayout:
+    orientation: 'vertical'
+
+    TestLabel:
+        id: testy
+        text: "hey"
+
+    Button:
+        text: "Press me"
+        on_release: testy.changer()
