@@ -101,8 +101,9 @@ class LayoutFunctioning(BoxLayout):
     #!!!
 
     master_kanji = MasterKanji()
-
     next_kanji = 0
+
+    #answer_bar = ObjectProperty(None)
 
     #def __init__(self, **kwargs):
     #    super(LayoutFunctioning, self).__init__(**kwargs)
@@ -154,7 +155,7 @@ class LayoutFunctioning(BoxLayout):
                 print("correct answer")
                 self.next_kanji = 1
                 print(self.ids)
-                #self.ids.answer_bar.opacity = 1 #Error
+                self.answer_bar.opacity = 1 #Error
 
 
 if __name__ == '__main__':
