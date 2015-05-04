@@ -14,7 +14,7 @@ class TestLabel(Label):
     #testy = ObjectProperty(None)
 
     def changer(self):
-        self.ids.testy.text = "Changed ^_^"
+        self.text = "Changed ^_^"
 
 
 class KanjiOriginApp(App):
