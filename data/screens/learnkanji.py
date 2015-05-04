@@ -13,6 +13,9 @@ from kivy.animation import Animation
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
 from kivy.properties import ObjectProperty
+from kivy.uix.boxlayout import BoxLayout
+
+import re
 
 
 class KanjiLearn():
@@ -63,10 +66,31 @@ class AnswerTextInput(TextInput):
         return super(AnswerTextInput, self).insert_text(substring, from_undo=from_undo)
 
 
-class LayoutFunction(BoxLayout):
+#Handles everything related to shown Kanji
+class MasterKanji():
+    def __init__(self):
+        self.upcoming = ["一", "二", "三", "四"]
+        self.up_answer = ["1", "2" ,"3" ,"4"]
+        self.current = ["愛"]
+        self.cur_answer = "love"
+
+    #Next Kanji
+    def nextkanji(self):
+        self.current = self.upcoming.pop(-1)
+        self.cur_answer = self.up_answer.pop(-1)
+
+    #Check if typed answer is correct
+    def check(self, answer):
+        if answer == self.cur_answer:
+            return 1
+        else:
+            return 0
+
+
+class LayoutFunctioning(BoxLayout):
 
     #!!! This code should be used
-    keyb_height = 260 #260, 526
+    keyb_height = NumericProperty(260) #260, 526
     #   Keyboard height will be available in a newer version of Kivy
     #keyb_height = Window.keyboard_height
     print(keyb_height)
@@ -75,6 +99,14 @@ class LayoutFunction(BoxLayout):
     show_answer = 0
     Kanji_s = ["爪", "冖", "心", "夂"]
     #!!!
+
+    master_kanji = MasterKanji()
+
+    next_kanji = 0
+
+    #def __init__(self, **kwargs):
+    #    super(LayoutFunctioning, self).__init__(**kwargs)
+    #    self.ids.learn_kanji.text = self.master_kanji.current #Error
 
     def timeNow(self):
         now = datetime.now()
@@ -100,9 +132,29 @@ class LayoutFunction(BoxLayout):
 
         return time_diff.total_seconds() / 86400 #1 day
 
+    #Formats the answer of the user
+    def textFormat(self, answer):
+        #Set answer to lower case and clean the answer of strange symbols
+        answer = answer.lower()
+        pattern = '[a-z0-9]'
+        answer = ''.join(re.findall(pattern, answer))
+        return answer
+
     # Function when the check/next button is pressed
-    def btnPressed(self):
+    def btnPressed(self, answer):
         print("- - - - -")
+        #Only do something when user actually typed or answer has been correct
+        if len(answer) > 0 or self.next_kanji == 1:
+            answer = self.textFormat(answer)
+
+            # Get next Kanji after answered correctly
+            #if self.next_kanji == 1:
+
+            if self.master_kanji.check(answer):
+                print("correct answer")
+                self.next_kanji = 1
+                print(self.ids)
+                #self.ids.answer_bar.opacity = 1 #Error
 
 
 if __name__ == '__main__':

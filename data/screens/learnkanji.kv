@@ -1,29 +1,26 @@
 #:kivy 1.9.0
 #:import Keyboard kivy.factory.Factory
+#:import learnkanji data.screens.learnkanji
 
 <sKanjiButton@Button>:
     font_size: '16sp'
     font_name: 'data/fonts/TakaoPMincho.ttf'
-
-#<LayoutFunction>:
 
 
 KanjiOriginScreen:
 	name: 'LearnKanji'
 	fullscreen: True
 
-	BoxLayout:
+	LayoutFunctioning:
+	    id: lfunc
         orientation: 'vertical'
-        #size_hint_y: None
-        #height: '48dp'
-
         #Widget with the to be learned Kanji
         Label:
             id: learn_kanji
             size_hint: 1, 0.42
             font_size: '160sp'
             #90*self.height*0.006
-            font_name: root.font_kanji
+            font_name: lfunc.font_kanji
             text: "BS" #root.character[0]
             #text_size: self.width, None
             color: 0, 0, 0, 1
@@ -65,14 +62,14 @@ KanjiOriginScreen:
                 font_size: '14sp'
                 text: "Check"
                 #Calls function for handling typed text
-                on_release: root.btnPressed(txt_field.text)
+                on_release: lfunc.btnPressed(txt_field.text)
                 #root.add_widget(answer_bar)
 
         #Containing STORY from DATABASE and small Kanji buttons
         BoxLayout:
             size_hint: 1, None
             #size: 1, root.keyb_height
-            height: root.keyb_height
+            height: lfunc.keyb_height
             #height: Keyboard.keyboard_height
             orientation: 'horizontal'
             canvas.before:
@@ -91,7 +88,7 @@ KanjiOriginScreen:
                     text: self.parent.text
                     font_size: '16sp'
                     text_size: self.width-10, None
-                    font_name: root.font_kanji
+                    font_name: lfunc.font_kanji
                     #blurs text:
                     size_hint_y: None
                     #pos: self.parent.width*.2, self.parent.height*.8

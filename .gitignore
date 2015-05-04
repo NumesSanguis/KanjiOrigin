@@ -1,0 +1,19 @@
+#Python pyc
+*.pyc
+
+#Hidden files
+.*
+!.gitignore
+
+#temp files
+*.*~
+*~
+
+#C++ object files
+*.o
+
+#Obstacle avoidance Calibration files
+*.cal
+
+#Log Files
+*.log

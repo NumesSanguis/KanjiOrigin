@@ -13,21 +13,14 @@ from kivy.animation import Animation
 from kivy.uix.screenmanager import Screen
 from kivy.uix.textinput import TextInput
 from kivy.properties import ObjectProperty
+from kivy.uix.boxlayout import BoxLayout
 
 #from data.screens.learnkanji import *
-import learnkanji
+import data.screens.learnkanji
 
 
 class KanjiOriginScreen(Screen):
     fullscreen = BooleanProperty(False)
-
-    #!!! I don't want this code here, but in learnkanji.py/LayoutFunction()
-    keyb_height = 260 #260, 526
-    print(keyb_height)
-    font_kanji = os.path.join('data', 'fonts', 'TakaoPMincho.ttf')
-    show_answer = 0
-    Kanji_s = ["爪", "冖", "心", "夂"]\
-    #!!!
 
     def add_widget(self, *args):
         if 'content' in self.ids:
@@ -48,7 +41,7 @@ class KanjiOriginApp(App):
         Clock.schedule_interval(self._update_clock, 1 / 60.)
         self.screens = {}
         self.available_screens = ([
-            'MainMenu', 'LearnKanji', 'LearningMethod', 'Donation'])
+            'MainMenu', 'LearnKanji', 'LearningMethod', 'Donation', 'Credits'])
         self.screen_names = self.available_screens
         curdir = dirname(__file__)
         self.available_screens = [join(curdir, 'data', 'screens',
