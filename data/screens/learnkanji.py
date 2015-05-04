@@ -155,7 +155,7 @@ class LayoutFunctioning(BoxLayout):
                 print("correct answer")
                 self.next_kanji = 1
                 print(self.ids)
-                self.answer_bar.opacity = 1 #Error
+                self.ids.answer_bar.opacity = 1 #Error
 
 
 if __name__ == '__main__':
