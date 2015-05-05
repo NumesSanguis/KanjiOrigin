@@ -16,6 +16,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 
 import re
+from collections import deque
 
 
 class KanjiLearn():
@@ -69,15 +70,17 @@ class AnswerTextInput(TextInput):
 #Handles everything related to shown Kanji
 class MasterKanji():
     def __init__(self):
-        self.upcoming = ["一", "二", "三", "四"]
-        self.up_answer = ["1", "2" ,"3" ,"4"]
-        self.current = ["愛"]
+        self.upcoming = deque(["一", "二", "三", "四"])
+        self.up_answer = deque(["1", "2" ,"3" ,"4"])
+        self.current = "愛"
         self.cur_answer = "love"
+        self.story = "Love is such a profound thing"
 
     #Next Kanji
     def nextkanji(self):
-        self.current = self.upcoming.pop(-1)
-        self.cur_answer = self.up_answer.pop(-1)
+        self.current = self.upcoming.popleft()
+        self.cur_answer = self.up_answer.popleft()
+        self.story = "You have found me"
 
     #Check if typed answer is correct
     def check(self, answer):
@@ -89,7 +92,6 @@ class MasterKanji():
 
 class LayoutFunctioning(BoxLayout):
 
-    #!!! This code should be used
     keyb_height = NumericProperty(260) #260, 526
     #   Keyboard height will be available in a newer version of Kivy
     #keyb_height = Window.keyboard_height
@@ -97,17 +99,17 @@ class LayoutFunctioning(BoxLayout):
 
     font_kanji = os.path.join('data', 'fonts', 'TakaoPMincho.ttf')
     show_answer = 0
-    Kanji_s = ["爪", "冖", "心", "夂"]
-    #!!!
+    #Kanji_s = ["爪", "冖", "心", "夂"]
 
     master_kanji = MasterKanji()
     next_kanji = 0
 
-    #answer_bar = ObjectProperty(None)
-
     #def __init__(self, **kwargs):
     #    super(LayoutFunctioning, self).__init__(**kwargs)
-    #    self.ids.learn_kanji.text = self.master_kanji.current #Error
+    #    self.ids.learn_kanji.text = self.master_kanji.current #Only available after loading widgets
+
+    def screeninit(self):
+        print("screeninit")
 
     def timeNow(self):
         now = datetime.now()
@@ -123,10 +125,6 @@ class LayoutFunctioning(BoxLayout):
         f = "%Y-%m-%d %H:%M:%S"
         t_1 = datetime.strptime(time_1, f)
         t_2 = datetime.strptime(time_2, f)
-        #print("Time: ")
-        #print(t_1)
-        #print(t_2)
-        #print(type(t_1))
         time_diff = t_2 - t_1
         #print(time_diff)
         #print(time_diff.total_seconds())
@@ -144,18 +142,39 @@ class LayoutFunctioning(BoxLayout):
     # Function when the check/next button is pressed
     def btnPressed(self, answer):
         print("- - - - -")
+
         #Only do something when user actually typed or answer has been correct
         if len(answer) > 0 or self.next_kanji == 1:
-            answer = self.textFormat(answer)
 
             # Get next Kanji after answered correctly
-            #if self.next_kanji == 1:
+            if self.next_kanji == 1:
+                # Next Kanji
+                self.master_kanji.nextkanji()
+                self.ids.learn_kanji.text = self.master_kanji.current
 
-            if self.master_kanji.check(answer):
-                print("correct answer")
-                self.next_kanji = 1
-                print(self.ids)
-                self.ids.answer_bar.opacity = 1 #Error
+                # Next Story although hidden
+                #self.ids.story.text = self.master_kanji.story
+
+                #re-init
+                self.next_kanji = 0
+                self.ids.send_btn.text = "Check"
+                self.ids.answer_bar.opacity = 0
+
+            else:
+                answer = self.textFormat(answer)
+
+                if self.master_kanji.check(answer):
+                    print("Correct answer")
+                    self.next_kanji = 1
+                    self.ids.send_btn.text = "Next"
+                    self.ids.answer_bar.background_color = (0, 0.7, 0, 1)
+                else:
+                    print("Wrong answer")
+                    self.ids.answer_bar.background_color = (0.7, 0, 0, 1)
+
+                self.ids.answer_bar.opacity = 1
+                self.show_answer = 1
+                self.ids.story.text = self.master_kanji.story
 
 
 if __name__ == '__main__':

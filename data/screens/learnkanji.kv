@@ -10,6 +10,7 @@
 <LayoutFunctioning>
     id: lfunc
     orientation: 'vertical'
+
     #Widget with the to be learned Kanji
     Label:
         id: learn_kanji
@@ -17,7 +18,7 @@
         font_size: '160sp'
         #90*self.height*0.006
         font_name: lfunc.font_kanji
-        text: "BS" #root.character[0]
+        text: lfunc.master_kanji.current
         #text_size: self.width, None
         color: 0, 0, 0, 1
         #size: self.texture_size
@@ -78,7 +79,7 @@
         #STORY about the to be learned Kanji (or small Kanji's)
         ScrollView:
             id: story
-            text: "Don't peak!" #root.character[1]
+            text: (lfunc.master_kanji.story if not lfunc.show_answer == 0 else "I'm hidden, nanana") if lfunc.show_answer else 'empty'
             size_hint_x: .8
             Label:
                 text: self.parent.text
