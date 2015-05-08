@@ -6,7 +6,6 @@
     font_size: '16sp'
     font_name: 'data/fonts/TakaoPMincho.ttf'
 
-
 <LayoutFunctioning>
     id: lfunc
     orientation: 'vertical'
@@ -34,7 +33,7 @@
         id: answer_bar
         size_hint: 1, 0.07
         font_size: '16sp'
-        text: "Love, Affection"
+        text: ', '.join(lfunc.master_kanji.cur_answer)
         background_color: 0, .7, 0, 1
         opacity: 0
 
@@ -52,6 +51,7 @@
             multiline: False
             size_hint_x: .8
             #on_text: self.root.autoCorrectText()
+            focus: True
 
         Button:
             id: send_btn
@@ -60,7 +60,7 @@
             text: "Check"
             #Calls function for handling typed text
             on_release: lfunc.btnPressed(txt_field.text)
-            #root.add_widget(answer_bar)
+            on_release: txt_field.resettext(lfunc.next_kanji)
 
     #Containing STORY from DATABASE and small Kanji buttons
     BoxLayout:
@@ -79,7 +79,7 @@
         #STORY about the to be learned Kanji (or small Kanji's)
         ScrollView:
             id: story
-            text: (lfunc.master_kanji.story if not lfunc.show_answer == 0 else "I'm hidden, nanana") if lfunc.show_answer else 'empty'
+            text: lfunc.master_kanji.story if lfunc.master_kanji.story_show == True else lfunc.master_kanji.story_hidden
             size_hint_x: .8
             Label:
                 text: self.parent.text

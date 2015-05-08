@@ -16,7 +16,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 
 #from data.screens.learnkanji import *
-import data.screens.learnkanji
+#import data.screens.learnkanji
 
 
 class KanjiOriginScreen(Screen):
@@ -34,7 +34,6 @@ class KanjiOriginApp(App):
     current_title = StringProperty()
     time = NumericProperty(0)
     screen_names = ListProperty([])
-
 
     def build(self):
         self.title = 'Kanji Origin'
@@ -59,6 +58,9 @@ class KanjiOriginApp(App):
         if idx == 0:
             self.root.ids.sm.switch_to(self.load_screen(idx), direction='right')
         else:
+            # Only load learnkanji.py when the screen is called
+            if idx == 1:
+                import data.screens.learnkanji
             self.root.ids.sm.switch_to(self.load_screen(idx), direction='left')
 
     def load_screen(self, index):

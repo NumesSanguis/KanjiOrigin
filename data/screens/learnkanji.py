@@ -17,24 +17,15 @@ from kivy.uix.boxlayout import BoxLayout
 
 import re
 from collections import deque
+import sqlite3
+from datetime import datetime
 
-
-class KanjiLearn():
-    def __init__(self):
-        self.show_kanji = 'BS'
-
-    def nextKanji(self):
-        #self.learnAlg()
-        self.show_kanji = '爪'
-
-    def learnAlg(self):
-        pass
 
 class AnswerTextInput(TextInput):
-    #Autocorrect filter
+    # Autocorrect filter
     design1 = ObjectProperty(None)
 
-    #redefine insert_text
+    # redefine insert_text
     def insert_text(self, substring, from_undo=False):
         #print(self.design1.auto_correct_check)
 
@@ -66,25 +57,87 @@ class AnswerTextInput(TextInput):
         #substring = substring.lower()
         return super(AnswerTextInput, self).insert_text(substring, from_undo=from_undo)
 
+    def resettext(self, next_kanji):
+        if next_kanji == True:
+            self.text = ""
+            self.focus = True
 
-#Handles everything related to shown Kanji
+
+class DBhandling():
+    def __init__(self):
+        pass
+
+
+
+
+# Handles everything related to shown Kanji
 class MasterKanji():
     def __init__(self):
-        self.upcoming = deque(["一", "二", "三", "四"])
-        self.up_answer = deque(["1", "2" ,"3" ,"4"])
-        self.current = "愛"
-        self.cur_answer = "love"
-        self.story = "Love is such a profound thing"
+        self.current, self.cur_answer, self.story = self.conndb("current", "SELECT", "*")
+        self.upcoming = deque(range(1,13)) #learnAlg
+        #self.story = "Love is such a profound thing"
+        self.story_show = False
+        self.story_hidden = "The answer is hidden, nanana"
 
-    #Next Kanji
+    # Handles database
+    def conndb(self, tabl, action, item, req=""):
+        # tabl = Table, action = SELECT/UPDATE, item = what should be selected/*
+
+        # Connect Database
+        print("Trying to connect to DB")
+        conn = sqlite3.connect(os.path.join("data", "db", "Kanji-story.db")) # path from main.py
+        c = conn.cursor()
+        print("DB connected with Table: {} and Action: {}".format(tabl, action))
+
+        c.execute("{} {} FROM {}{}".format(action, item, tabl, req))
+        result = c.fetchall()
+        print(result)
+
+        if tabl == "current" or "Kanji" and action == "SELECT":
+            if tabl == "Kanji":
+                returny = result[0]
+                #c.execute("UPDATE current SET framenum = {}".format(req[-1])) # Uncomment when should not start love
+            else:
+                c.execute("SELECT character, meanings, story FROM KANJI WHERE framenum={}".format(result[0][0]))
+                returny = c.fetchone()
+            returny = list(returny)
+            answers = returny[1].split('/')
+            returny[1] = answers
+
+        # Save change to database
+        #conn.commit()
+
+        # Close connection
+        conn.close()
+        print("DB connection closed")
+
+        if action == "SELECT":
+           return returny
+           #return #list
+
+
+    # Next Kanji
     def nextkanji(self):
-        self.current = self.upcoming.popleft()
-        self.cur_answer = self.up_answer.popleft()
-        self.story = "You have found me"
+        # All Kanji's are learned
+        if not self.upcoming:
+            self.story = "That was the last Kanji 0.o\nYou dit it, YOU DID IT!!!!!"
+            self.current = "DONE"
+            self.cur_answer = "amazing"
 
-    #Check if typed answer is correct
+        # Get next Kanji character, answer, story and also update current table
+        else:
+            # Get new Kanji and answer
+            self.current, self.cur_answer, self.story = self.conndb("Kanji", "SELECT", "character, meanings, story",
+                                                        " WHERE framenum = {}".format(self.upcoming.popleft()))
+
+    # Update database with current knowledge of answered Kanji
+    def updateKanji(self, correct):
+
+        pass
+
+    # Check if typed answer is correct
     def check(self, answer):
-        if answer == self.cur_answer:
+        if answer in self.cur_answer:
             return 1
         else:
             return 0
@@ -92,25 +145,19 @@ class MasterKanji():
 
 class LayoutFunctioning(BoxLayout):
 
+    # Keyboard stuff, still has to be changed
     keyb_height = NumericProperty(260) #260, 526
     #   Keyboard height will be available in a newer version of Kivy
     #keyb_height = Window.keyboard_height
     print(keyb_height)
 
     font_kanji = os.path.join('data', 'fonts', 'TakaoPMincho.ttf')
-    show_answer = 0
     #Kanji_s = ["爪", "冖", "心", "夂"]
 
+    next_kanji = False
     master_kanji = MasterKanji()
-    next_kanji = 0
 
-    #def __init__(self, **kwargs):
-    #    super(LayoutFunctioning, self).__init__(**kwargs)
-    #    self.ids.learn_kanji.text = self.master_kanji.current #Only available after loading widgets
-
-    def screeninit(self):
-        print("screeninit")
-
+    # Current Time
     def timeNow(self):
         now = datetime.now()
         f = "%Y-%m-%d %H:%M:%S"
@@ -118,7 +165,7 @@ class LayoutFunctioning(BoxLayout):
         print("time now: " + str(now))
         return now
 
-
+    # Calculate difference between 2 time points
     def timeDifference(self, time_1, time_2):
         # Gets time in strings
         # Returns difference in days
@@ -144,10 +191,10 @@ class LayoutFunctioning(BoxLayout):
         print("- - - - -")
 
         #Only do something when user actually typed or answer has been correct
-        if len(answer) > 0 or self.next_kanji == 1:
+        if len(answer) > 0 or self.next_kanji == True:
 
             # Get next Kanji after answered correctly
-            if self.next_kanji == 1:
+            if self.next_kanji == True:
                 # Next Kanji
                 self.master_kanji.nextkanji()
                 self.ids.learn_kanji.text = self.master_kanji.current
@@ -156,25 +203,37 @@ class LayoutFunctioning(BoxLayout):
                 #self.ids.story.text = self.master_kanji.story
 
                 #re-init
-                self.next_kanji = 0
+                self.next_kanji = False
                 self.ids.send_btn.text = "Check"
+                print(self.master_kanji.cur_answer)
                 self.ids.answer_bar.opacity = 0
+                self.ids.answer_bar.text = ', '.join(self.master_kanji.cur_answer)
+                self.ids.story.text = self.master_kanji.story_hidden
+                self.master_kanji.story_show = False
 
+            # Check given answer
             else:
                 answer = self.textFormat(answer)
 
+                # Correct answer
                 if self.master_kanji.check(answer):
                     print("Correct answer")
-                    self.next_kanji = 1
+                    self.next_kanji = True
                     self.ids.send_btn.text = "Next"
                     self.ids.answer_bar.background_color = (0, 0.7, 0, 1)
+                    self.master_kanji.updateKanji(True)
+
+                # Wrong answer
                 else:
                     print("Wrong answer")
                     self.ids.answer_bar.background_color = (0.7, 0, 0, 1)
+                    self.master_kanji.updateKanji(False)
 
+                # An answer is given changes
                 self.ids.answer_bar.opacity = 1
                 self.show_answer = 1
                 self.ids.story.text = self.master_kanji.story
+                self.master_kanji.story_show = True
 
 
 if __name__ == '__main__':
