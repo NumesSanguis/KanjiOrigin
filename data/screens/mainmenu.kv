@@ -1,27 +1,27 @@
+<MainButton@Button>:
+    size_hint_y: None
+	height: '60dp'
+
 KanjiOriginScreen:
 	name: 'MainMenu'
 	#fullscreen: True
 
-	Button:
-		size_hint_y: None
-		height: '48dp'
+	MainButton:
 		text: 'Learn Kanji'
 		on_release: app.go_screen(1)
 
-	Button:
-		size_hint_y: None
-		height: '48dp'
+	MainButton:
 		text: 'Learning method info'
 		on_release: app.go_screen(2)
 
-	Button:
-		size_hint_y: None
-		height: '48dp'
-		text: 'Donation :D'
-		on_release: app.go_screen(3)
+	MainButton:
+	    text: 'Backup & Restore'
+	    on_release: app.go_screen(3)
 
-    Button:
-		size_hint_y: None
-		height: '48dp'
-		text: 'Credits'
+	MainButton:
+		text: 'Donation :D'
 		on_release: app.go_screen(4)
+
+    MainButton:
+		text: 'Credits'
+		on_release: app.go_screen(5)

@@ -1,15 +1,11 @@
-#:kivy 1.8.0
-#:import KivyLexer kivy.extras.highlight.KivyLexer
-#:import Factory kivy.factory.Factory
+#:kivy 1.9.1
 
-<ActionLabel@ActionItem+Label>:
-    text_size: self.width - dp(6), self.height
-    halign: 'center'
-    valign: 'middle'
-    minimum_width: '60sp'
+#<ActionLabel@ActionItem+Label>:
+#    text_size: self.width - dp(6), self.height
+#    halign: 'center'
+#    valign: 'middle'
+#    minimum_width: '60sp'
 
-#<ActionDropdown>:
-#    on_size: self.width = '220dp'
 
 <KanjiOriginScreen>:
     ScrollView:
@@ -21,7 +17,7 @@
             GridLayout:
                 id: content
                 cols: 1
-                spacing: '8dp'
+                spacing: '16dp'
                 padding: '8dp'
                 size_hint: (1, 1) if root.fullscreen else (.8, None)
                 height: self.height if root.fullscreen else self.minimum_height
@@ -47,26 +43,25 @@ BoxLayout:
             id: av
 
             ActionPrevious:
+                id: actp
                 #app_icon: 'path/' #App icon
                 with_previous: (False if sm.current_screen.name == 'MainMenu' else True) if sm.current_screen else False
                 title: ('Home' if not sm.current_screen.name == 'MainMenu' else '') if sm.current_screen else ''
                 # 'Home' + ('' if not app.current_title else ' - {}'.format(app.current_title))
                 on_release: if not sm.current_screen.name == 'MainMenu': app.go_screen(0)
 
-            ActionLabel:
-                id:lbl1
-                text: 'Now: 12'
-
-            ActionLabel:
-                id:lbl2
-                text: 'Forgot: 9'
-
-            ActionLabel:
-                id:lbl3
-                text: 'Left: 2010'
-
-        #Label:
-        #    text: "Test"
+#            ActionSeparator:
+#                # Label:
+#                id:lbl1
+#                text: "Now: {}".format(app.actionbar_status[0])
+#
+#            ActionSeparator:
+#                id:lbl2
+#                text: "Forgot: {}".format(app.actionbar_status[1])
+#
+#            ActionSeparator:
+#                id:lbl3
+#                text: "Left: {}".format(app.actionbar_status[2])
 
     ScreenManager:
         id: sm

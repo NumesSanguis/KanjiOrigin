@@ -9,14 +9,12 @@ from kivy.lang import Builder
 from kivy.properties import NumericProperty, StringProperty, BooleanProperty,\
     ListProperty
 from kivy.clock import Clock
-from kivy.animation import Animation
 from kivy.uix.screenmanager import Screen
-from kivy.uix.textinput import TextInput
-from kivy.properties import ObjectProperty
-from kivy.uix.boxlayout import BoxLayout
+from kivy.core.window import Window
+from kivy.metrics import dp
 
-#from data.screens.learnkanji import *
-#import data.screens.learnkanji
+from kivy.utils import platform
+import data.screens.learnkanji_alg as lrnalg
 
 
 class KanjiOriginScreen(Screen):
@@ -35,17 +33,53 @@ class KanjiOriginApp(App):
     time = NumericProperty(0)
     screen_names = ListProperty([])
 
+    learnalg_count = lrnalg.LearnAlg(2)
+    actionbar_status = learnalg_count.countlearned()
+
     def build(self):
         self.title = 'Kanji Origin'
         Clock.schedule_interval(self._update_clock, 1 / 60.)
         self.screens = {}
         self.available_screens = ([
-            'MainMenu', 'LearnKanji', 'LearningMethod', 'Donation', 'Credits'])
+            'MainMenu', 'LearnKanji', 'LearningMethod', 'Backup', 'Donation', 'Credits'])
         self.screen_names = self.available_screens
         curdir = dirname(__file__)
         self.available_screens = [join(curdir, 'data', 'screens',
             '{}.kv'.format(fn)) for fn in self.available_screens]
         self.go_screen(0)
+
+        # Binds the back button on Android
+        self.bind(on_start=self.post_build_init)
+
+    # Binds the back button on Android
+    def post_build_init(self, *args):
+        if platform() == 'android':
+            import android
+            android.map_key(android.KEYCODE_BACK, 1001)
+
+        win = Window
+        win.bind(on_keyboard=self.my_key_handler)
+
+    def my_key_handler(self, window, keycode1, keycode2, text, modifiers):
+        # Esc or Android back button pressed
+        if keycode1 in [27, 1001]:
+            # TODO Keyboard open -> close it
+            #if Window.keyboard_height > dp(25):
+            #    window.close()
+
+            # Not in main screen # TODO Kivy screen change -> keyb closed, python screen change -> keyb not closed
+            print("self.index: {}".format(self.index))
+            if self.index != 0:
+                print("self.index not 0")
+                self.go_screen(0)
+                return True
+            # In main screen
+            else:
+                print("self.index 0")
+                print("Closing App")
+                App.get_running_app().stop()
+
+        return False
 
     def on_pause(self):
         return True
@@ -59,8 +93,8 @@ class KanjiOriginApp(App):
             self.root.ids.sm.switch_to(self.load_screen(idx), direction='right')
         else:
             # Only load learnkanji.py when the screen is called
-            if idx == 1:
-                import data.screens.learnkanji
+            #if idx == 1:
+            #    import data.screens.learnkanji
             self.root.ids.sm.switch_to(self.load_screen(idx), direction='left')
 
     def load_screen(self, index):

@@ -1,0 +1,251 @@
+#:kivy 1.9.0
+#:import backup data.screens.backup
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+
+<BackupButton@Button>:
+    size_hint_y: None
+	height: '60dp'
+
+<BackupSD>:
+    popbackup: popbackup.__self__
+    name: 'BackupSD'
+
+    BoxLayout:
+        id: backupsd
+        orientation: 'vertical'
+        spacing: '14dp'
+
+        Popup:
+            id: popbackup
+            title: "Backup succeeded"
+            on_parent:
+                if self.parent == backupsd: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayout:
+                orientation: 'vertical'
+                RstDocument:
+                    text: root.poplbtext
+                    size_hint_y: .7
+
+                Button:
+                    text: 'Close'
+                    on_release: popbackup.dismiss()
+                    size_hint_y: .3
+
+        RstDocument:
+            text: root.lbtext
+
+        Button:
+            text: root.bttext
+            on_release: root.callback()
+            size_hint_y: .3
+
+<RestoreSD>:
+    poprestore: poprestore.__self__
+    name: 'RestoreSD'
+
+    BoxLayout:
+        id: restoresd
+        orientation: 'vertical'
+        spacing: '14dp'
+
+        Popup:
+            id: poprestore
+            title: "Confirm restore"
+            on_parent:
+                if self.parent == restoresd: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayout:
+                orientation: 'vertical'
+                RstDocument:
+                    text: root.poplbtext
+                    size_hint_y: .7
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: .3
+                    Button:
+                        text: 'Restore learning process'
+                        on_release: root.callback()
+                        size_hint_x: .7
+                    Button:
+                        text: 'Cancel'
+                        on_release: poprestore.dismiss()
+                        size_hint_x: .3
+
+        RstDocument:
+            text: root.lbtext
+
+        Button:
+            text: root.bttext
+            on_release: root.poprestore.open()
+            size_hint_y: .3
+
+
+<koohiiCSV>:
+    name: 'koohiiCSV'
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: '14dp'
+
+        RstDocument:
+            text: root.lbtext
+
+        Button:
+            text: root.bttext
+            on_release: root.callback()
+            size_hint_y: .3
+            disabled: True  # delete when function does something
+
+<ResetKO>:
+    popreset: popreset.__self__
+    popundo: popundo.__self__
+    popfail: popfail.__self__
+    name: 'ResetKO'
+
+    BoxLayout:
+        id: resetko
+        orientation: 'vertical'
+        spacing: '14dp'
+
+        Popup:
+            id: popreset
+            title: "Confirm reset"
+            on_parent:
+                if self.parent == resetko: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayout:
+                orientation: 'vertical'
+                RstDocument:
+                    text: root.poplbtext
+                    size_hint_y: .7
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: .3
+                    Button:
+                        text: 'RESET Kanji Origin'
+                        on_release: root.ResetApp()
+                        size_hint_x: .7
+                    Button:
+                        text: 'Cancel'
+                        on_release: popreset.dismiss()
+                        size_hint_x: .3
+
+        Popup:
+            id: popundo
+            title: "Confirm undo"
+            on_parent:
+                if self.parent == resetko: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayout:
+                orientation: 'vertical'
+                RstDocument:
+                    text: root.poplbtext
+                    size_hint_y: .7
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: .3
+                    Button:
+                        text: 'UNDO reset KO'
+                        on_release: root.UndoReset()
+                        size_hint_x: .7
+                    Button:
+                        text: 'Cancel'
+                        on_release: popundo.dismiss()
+                        size_hint_x: .3
+
+        Popup:
+            id: popfail
+            title: "Undo reset failed"
+            on_parent:
+                if self.parent == resetko: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayout:
+                orientation: 'vertical'
+                RstDocument:
+                    text: root.popfailtext
+                    size_hint_y: .7
+
+                Button:
+                    text: 'Close'
+                    on_release: popfail.dismiss()
+                    size_hint_y: .3
+
+        RstDocument:
+            text: root.lbtext
+
+        BoxLayout:
+            size_hint_y: .3
+            padding: '0dp', '7dp', '0dp', '0dp'
+            spacing: '14dp'
+
+            Button:
+                size_hint_x: 1.7
+                text: root.rstext
+                background_color: (1, .5, .5, 1)
+                on_release: root.popreset.open()
+
+            Button:
+                #size_hint_x: .3
+                text: root.urstext
+                on_release: root.popundo.open()
+
+
+KanjiOriginScreen:
+	name: 'Backup'
+	fullscreen: True
+
+    # Always start with screen 'Bmain'
+	on_pre_enter: bsm.current = 'Bmain'
+	on_pre_enter: bsm.transition = NoTransition(duration=0)
+
+	ScreenManager:
+	    id: bsm
+	    #transition: SlideTransition(direction="right")
+
+	    Screen:
+	        name: 'Bmain'
+	        #transition: NoTransition # TODO turn off transition, now it's ignored
+	        #on_pre_enter: transition = NoTransition(duration=0)
+
+	        KanjiOriginScreen:
+	            #fullscreen: True
+
+                BackupButton:
+                    text: 'Backup to SD-card info'
+                    on_release: bsm.current = 'BackupSD'
+                    on_release: bsm.transition = SlideTransition(direction="left")
+                    #on_release: app.root.ids.actp.on_release = app.go_screen(0) # TODO
+
+                BackupButton:
+                    text: 'Restore from SD-card info'
+                    on_release: bsm.current = 'RestoreSD'
+                    on_release: bsm.transition = SlideTransition(direction="left")
+
+                BackupButton:
+                    text: 'Import .csv koohii info'
+                    on_release: bsm.current = 'koohiiCSV'
+                    on_release: bsm.transition = SlideTransition(direction="left")
+
+                BackupButton:
+                    text: 'Reset KanjiOrigin info'
+                    background_color: (1, .5, .5, 1)
+                    on_release: bsm.current = 'ResetKO'
+                    on_release: bsm.transition = SlideTransition(direction="left")
+
+        BackupSD
+
+        RestoreSD
+
+        koohiiCSV
+
+        ResetKO
