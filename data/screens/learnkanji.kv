@@ -72,7 +72,7 @@
     skanjitext: 'empty'
 
     # TODO Inherit from LayoutFunctioning somehow?
-    on_state: self.parent.parent.lfunc.changeStory(self.skanjitext) if self.state == 'down' else False
+    on_state: self.lfunc.changeStory(self.skanjitext)  # if self.state == 'down' else False
 
     state_image: self.background_normal if self.state == 'normal' else self.background_down
 	disabled_image: self.background_disabled_normal if self.state == 'normal' else self.background_disabled_down
@@ -213,25 +213,27 @@
                 padding: [dp(20), dp(10)]
                 on_release: webbrowser.open(lfunc.ww_link)
 
-#        BoxLayout:
-#            id: sKanjibox
-#            size_hint_x: .2
-#            orientation: 'vertical'
-#
-#            Button:
-#                text: 'W'
-#                on_release: lfunc.addsKanji()
-#
-#            SKanjiToggleButton:
-#                font_name: lfunc.font_kanji
-#                text: lfunc.master_kanji.current
-#                state: 'down'
-#
-#
-#            SKanjiToggleButton:
-#                text: "test"
-#                skanjitext: 'derp'
-#                on_state: lfunc.changeStory(self.skanjitext) if self.state == 'down' else False
+        BoxLayout:
+            id: sKanjibox
+            size_hint_x: .2
+            orientation: 'vertical'
+
+            Button:
+                text: 'W'
+                on_release: lfunc.addsKanji()
+
+            SKanjiToggleButton:
+                lfunc: root
+                font_name: lfunc.font_kanji
+                text: lfunc.master_kanji.current
+                state: 'down'
+
+
+            SKanjiToggleButton:
+                lfunc: root
+                text: "test"
+                skanjitext: 'derp'
+                #on_state: lfunc.changeStory(self.skanjitext) if self.state == 'down' else False
 
 
 KanjiOriginScreen:

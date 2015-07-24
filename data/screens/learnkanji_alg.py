@@ -126,22 +126,6 @@ class LearnAlg():
     def answerKanji(self, framenum, correct):
         print("Doesn't do anything in this function")
 
-        # print("\nKanji correct: {}".format(correct))
-        #
-        # # Connect database
-        # conn = sqlite3.connect(self.db_path)
-        # c = conn.cursor()
-        # print("Connected DB with learnAlg")
-        #
-        # # set previous Kanji active = 0
-        # c.execute("UPDATE learnAlg SET active = 0 WHERE active = 1")
-        #
-        # # Save change to database
-        # conn.commit()
-        #
-        # # Close connection
-        # conn.close()
-        # print("DB with learnAlg connection closed")
 
     def countlearned(self):
         print("\nUpdate answerbar with status Kanji learned")

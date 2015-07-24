@@ -133,9 +133,9 @@ class MasterKanji(EventDispatcher):
         # Update status learning
         status = self.alg.countlearned()
 
-        # App.get_running_app().root.ids.lbl1.text = "Now: {}".format(status[0])
-        # App.get_running_app().root.ids.lbl2.text = "Forgot: {}".format(status[1])
-        # App.get_running_app().root.ids.lbl3.text = "Left: {}".format(status[2])
+        App.get_running_app().root.ids.lbl1.text = "Now: {}".format(status[0])
+        App.get_running_app().root.ids.lbl2.text = "Forgot: {}".format(status[1])
+        App.get_running_app().root.ids.lbl3.text = "Left: {}".format(status[2])
 
     # Update current Kanji table
     def updateCurrent(self, nxt, correct=-1):
@@ -322,19 +322,24 @@ class LayoutFunctioning(BoxLayout):
 
         #self.keyb_height = keyb_height_change
 
+
     # Flash the TextInput red when wrong answer is given
     def flashred(self):
         print("Flashing textinput red")
         self.ids.txt_field.background_color = (1, 0.4, 0.4, 1)
         Animation(background_color=(1, 0.75, 0.75, 1), duration=.5).start(self.ids.txt_field)
 
+
     def changeStory(self, skanji):
         print("Change story to {}".format(skanji))
 
+
     def addsKanji(self):
         print("addsKanji")
-        self.ids.sKanjibox.add_widget(Factory.SKanjiToggleButton(on))
+        #print(App.get_running_app().root.ids.learn_kanji.text)
+        self.ids.sKanjibox.add_widget(Factory.SKanjiToggleButton(text='on', root=self))
         #self.ids.foo.text = "T"
+
 
     # Function when the check/next button is pressed
     def btnPressed(self, answer):
