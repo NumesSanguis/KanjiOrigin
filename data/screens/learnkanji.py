@@ -3,7 +3,7 @@
 
 import os
 from kivy.app import App
-from kivy.properties import NumericProperty, StringProperty, BooleanProperty, ListProperty
+from kivy.properties import NumericProperty, StringProperty, BooleanProperty, ListProperty, ObjectProperty
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.core.window import Window
@@ -11,8 +11,9 @@ from kivy.metrics import dp
 from kivy.animation import Animation
 from kivy.event import EventDispatcher
 from kivy.uix.button import Button
+from kivy.uix.togglebutton import ToggleButton
 from kivy.factory import Factory
-#from kivy.clock import Clock
+from kivy.clock import Clock
 
 import re
 from collections import deque
@@ -22,6 +23,19 @@ import sqlite3
 from difflib import SequenceMatcher
 
 import learnkanji_alg
+
+#from __future__ import unicode_literals  # TODO test if works
+
+#font_kanji = os.path.join('data', 'fonts', 'TakaoPMincho.ttf')
+
+
+class SKanjiToggleButton(ToggleButton):
+    lfunc = ObjectProperty(None)
+
+    def on_lfunc(self, obj, lfunc):
+        if lfunc:
+            self.font_name = lfunc.font_kanji
+            #self.text = self.text
 
 
 class AnswerTextInput(TextInput):
@@ -55,6 +69,7 @@ class MasterKanji(EventDispatcher):
     def __init__(self, **kwargs):
         super(MasterKanji, self).__init__(**kwargs)
 
+        self.db_name = os.path.join("data", "db", "Kanji-story.db")  # path from main.py
         self.alg = learnkanji_alg.LearnAlg()
         self.cur_framenum = self.conndb("current", "SELECT", "framenum")
         print("Init with current framenum: {}".format(self.cur_framenum))
@@ -62,6 +77,10 @@ class MasterKanji(EventDispatcher):
         self.upcoming = deque()  # deque(self.alg.retrieveKanji()) gives error
         self.story_hidden = "The answer is hidden, please provide an answer in the text-bar above and press 'check'." \
                             "\nYou cannot advance to the next Kanji until you have typed the right response."
+        self.radicals_list = []
+        self.radicalDict()
+        self.sKanji_list = []
+        self.sKanjiDict()
 
     # Handles database
     def conndb(self, tabl, action, item, req=""):
@@ -69,7 +88,7 @@ class MasterKanji(EventDispatcher):
 
         # Connect Database
         print("Trying to connect to DB")
-        conn = sqlite3.connect(os.path.join("data", "db", "Kanji-story.db")) # path from main.py
+        conn = sqlite3.connect(self.db_name)
         c = conn.cursor()
         print("DB connected with Table: {}, Action: {} and item: {}".format(tabl, action, item))
 
@@ -89,6 +108,7 @@ class MasterKanji(EventDispatcher):
                 answers = returny[1].split('/')
                 # Makes the answers lower case
                 returny[1] = answers  #[x.lower() for x in answers]
+                returny[0] = returny[0].encode('utf-8')  # TODO fix this for Kanji Koohii (maybe fixed)
             else:
                 print("I do have {}".format(item))
                 returny = result[0][0]
@@ -107,6 +127,65 @@ class MasterKanji(EventDispatcher):
         if action == "SELECT":
            return returny
            #return #list
+
+        # Creates list for radicals of current Kanji
+    def radicalDict(self):
+        # Connect Database
+        print("\nTrying to connect to DB with table Radical and RadicalMeaning")
+        conn = sqlite3.connect(self.db_name)
+        c = conn.cursor()
+
+        c.execute("SELECT framenum, radicals FROM Radical WHERE framenum = ?", (self.cur_framenum,))
+        result = c.fetchone()
+        if result:
+            print(result)
+            # Split number reference to radicals to a list
+            radical_num = result[1].split('/')
+            print(radical_num)
+
+            # Get refered radicals
+            for rnum in radical_num:
+                c.execute("SELECT radical FROM RadicalMeaning WHERE number = ?", (rnum,))
+                result = c.fetchone()
+                print(result)
+                self.radicals_list.append(result[0].encode('utf-8'))
+
+            print(self.radicals_list)
+        else:
+            print("No radicals")
+            self.radicals_list = []
+
+    # Creates list for small Kanji of current Kanji
+    def sKanjiDict(self):
+        # Connect Database
+        print("\nTrying to connect to DB with table sKanji")
+        conn = sqlite3.connect(self.db_name)
+        c = conn.cursor()
+
+        c.execute("SELECT framenum, smallKanji FROM sKanji WHERE framenum = ?", (self.cur_framenum,))
+        result = c.fetchone()
+        if result:
+            print(result)
+            # Split number reference to Kanji to a list
+            sKanji_num = result[1].split('/')
+            print(sKanji_num)
+
+            # Get refered Kanji's
+            for snum in sKanji_num:
+                # Get highest Kanji shown to not have small Kanji higher than so far shown.
+                c.execute("SELECT MAX(framenum) FROM learnAlg")
+                max = c.fetchone()
+                print("Max framenum seen: {}".format(max))
+                
+                c.execute("SELECT character FROM Kanji WHERE framenum = ? AND framenum <= ?", (snum, max[0]))
+                result = c.fetchone()
+                print(result)
+                self.sKanji_list.append(result[0].encode('utf-8'))
+
+            print(self.sKanji_list)
+        else:
+            print("No small Kanji")
+            self.sKanji_list = []
 
     # Next Kanji
     def nextkanji(self):
@@ -132,6 +211,10 @@ class MasterKanji(EventDispatcher):
 
         # Update status learning
         status = self.alg.countlearned()
+
+        # Update sKanji_dict for sKanji buttons
+        self.radicalDict()
+        self.sKanjiDict()
 
         App.get_running_app().root.ids.lbl1.text = "Now: {}".format(status[0])
         App.get_running_app().root.ids.lbl2.text = "Forgot: {}".format(status[1])
@@ -195,7 +278,7 @@ class MasterKanji(EventDispatcher):
         sm_ind = sm_list.index(max(sm_list))
 
         # If distance is small enough (higher is closer)
-        if sm_list[sm_ind] > 0.6:
+        if sm_list[sm_ind] > 0.7:
             self.fix_answer = self.cur_answer[sm_ind]
             print("Fix: {}".format(self.cur_answer[sm_ind]))
             return 1
@@ -225,6 +308,11 @@ class LayoutFunctioning(BoxLayout):
     if master_kanji.cur_framenum == 0:
         txt_field_focus_i = BooleanProperty(False)
 
+    # Send button disabled with no text
+    send_disabled = BooleanProperty(True)
+    # Enable send button timer in sec
+    send_disabled_t = 3
+
     # Link button to website
     ww_link = StringProperty()
 
@@ -233,6 +321,10 @@ class LayoutFunctioning(BoxLayout):
 
     def __init__(self, **kwargs):
         super(LayoutFunctioning, self).__init__(**kwargs)
+
+        # Enable send_btn after some seconds
+        self.cb_disablesend = lambda dt: self.disablesend(False)
+        Clock.schedule_once(self.cb_disablesend, self.send_disabled_t)
 
         # When previously saw finish screen
         if self.master_kanji.cur_framenum == -1:
@@ -250,7 +342,7 @@ class LayoutFunctioning(BoxLayout):
         print("!!!   DEBUG UTF-8   !!!")
         #print(self.master_kanji.current)
         print(type(self.master_kanji.current))
-        self.ww_link = u"http://kanji.koohii.com/study/kanji/{}".format("TODO") #self.master_kanji.current error
+        self.ww_link = "http://kanji.koohii.com/study/kanji/{}".format(self.master_kanji.current)  # "TODO") # error
 
         # Keyboard height
         #Clock.schedule_once(lambda dt: self.storykeybheight())
@@ -272,6 +364,8 @@ class LayoutFunctioning(BoxLayout):
             self.next_kanji = True
             self.answered = 1
             self.master_kanji.story_show = True
+            Clock.unschedule(self.cb_disablesend)
+            self.disablesend(False)
 
         # Wrong answer
         else:
@@ -279,6 +373,15 @@ class LayoutFunctioning(BoxLayout):
             self.next_kanji = False
             self.answered = 1
             self.master_kanji.story_show = True
+
+        # sKanji buttons (Clock.schedule to call this function after .kv initialisation)
+        Clock.schedule_once(lambda dt: self.changeSKanji())
+        #self.changeSKanji()
+
+    def disablesend(self, dis):
+        print("Disable send button: {}".format(dis))
+        self.send_disabled = dis
+        Clock.unschedule(self.cb_disablesend)
 
     # Change the BoxLayout height with the story inside to match user's keyboard height
     def storykeybheight(self, window, keycode1, keycode2, text, modifiers):
@@ -330,73 +433,155 @@ class LayoutFunctioning(BoxLayout):
         Animation(background_color=(1, 0.75, 0.75, 1), duration=.5).start(self.ids.txt_field)
 
 
-    def changeStory(self, skanji):
-        print("Change story to {}".format(skanji))
+    # Changes the shown story to the selected radical
+    def changeStory(self, skanji, radical):
+        #print("Change story to {} and radical: {}".format(skanji, radical))  # Doesn't work on Android
+        #print("Change story to "+skanji+"and radical: {}".format(radical))
+
+        # Connect database
+        conn = sqlite3.connect(self.master_kanji.db_name)
+        #conn.row_factory = lambda cursor, row: row[0]
+        c = conn.cursor()
+
+        # Radical or not
+        if radical:
+            c.execute("SELECT Rjapanese, alt, strokes, meanings FROM RadicalMeaning WHERE radical = ?"
+                      , (skanji.decode('utf-8'),))
+            story = c.fetchone()
+            print(story)
+            if story[1] != '':
+                self.master_kanji.story = skanji.decode('utf-8')+"Radical: "+story[0]+"\nAlt: "+story[1]\
+                                          +"\nStrokes: "+str(story[2])+"\n\nMeanings: "+story[3]  # TODO markup
+            else:
+                self.master_kanji.story = skanji.decode('utf-8')+"\nRadical: "+story[0]+\
+                                          "\nStrokes: "+str(story[2])+"\n\nMeanings: "+story[3]  # TODO markup
+
+        else:
+            c.execute("SELECT meanings, story FROM Kanji WHERE character = ?", (skanji.decode('utf-8'),))
+            story = c.fetchone()
+            print(story)
+            if skanji != self.master_kanji.current:
+                self.master_kanji.story = skanji.decode('utf-8')+"\n[b]"+story[0]+"[/b]\n\n"+story[1]  # TODO markup
+            else:
+                self.master_kanji.story = story[1]
 
 
-    def addsKanji(self):
+    def addsKanji(self, stext, r):
         print("addsKanji")
         #print(App.get_running_app().root.ids.learn_kanji.text)
-        self.ids.sKanjibox.add_widget(Factory.SKanjiToggleButton(text='on', root=self))
+        skanj = SKanjiToggleButton(lfunc=self, text=stext, radical=r)  # , lfunc = self.ids.lfunc
+        self.ids.sKanjibox.add_widget(skanj)
         #self.ids.foo.text = "T"
+
+    def delsKanji(self):
+        print("delsKanji")
+        #print(getattr(self.ids, 'togglemain').text)
+
+        # TODO set togglemain to down
+
+        # children = self.children[:]
+        #
+        # while children:
+        #     child = children.pop()
+        #
+        #     print(child)
+
+        # Remove all buttons except with main Kanji
+        for child in [child for child in self.ids.sKanjibox.children if child.text != self.master_kanji.current]:
+            print("Remove: {}".format(child))
+            self.ids.sKanjibox.remove_widget(child)
+
+        # Set main Kanji button state to down
+        for child in self.ids.sKanjibox.children:
+            child.state = 'down'
+
+    def changeSKanji(self):
+        # Delete current sKanji buttons again to remove radicals same as Kanji
+        self.delsKanji()
+
+        # Add new sKanji buttons
+        for s in self.master_kanji.radicals_list:
+            self.addsKanji(s, True)
+
+        # Add new sKanji buttons
+        for s in self.master_kanji.sKanji_list:
+            self.addsKanji(s, False)
+
+        # Set radicals_list and sKanji_list to empty after adding buttons
+        self.master_kanji.radicals_list = []
+        self.master_kanji.sKanji_list = []
 
 
     # Function when the check/next button is pressed
     def btnPressed(self, answer):
         print("\n- - - - -")
+        Clock.unschedule(self.cb_disablesend)
 
         #Only do something when user actually typed or answer has been correct
-        if len(answer) > 0 or self.next_kanji == True:
+        #if self.send_disabled == False:  # len(answer) > 0 or self.next_kanji == True:
             #self.ids.story_box.height = Window.keyboard_height - dp(8)
             #print("New keyb height: {}".format(self.ids.story_box.height))
 
-            # TODO bind()
-            # Get next Kanji after answered correctly
-            if self.next_kanji == True:
-                print("Next Kanji...")
-                # Next Kanji
-                self.master_kanji.nextkanji()
+        # TODO bind()
+        # Get next Kanji after answered correctly
+        if self.next_kanji == True:
+            print("Next Kanji...")
+            # Delete current sKanji buttons
+            self.delsKanji()
 
-                # Next Story although hidden
-                #self.ids.story.text = self.master_kanji.story
+            # Next Kanji
+            self.master_kanji.nextkanji()
 
-                #re-init
-                print("Reinit button: no answer")
-                self.next_kanji = False
-                print(self.master_kanji.cur_answer)
-                self.master_kanji.story_show = False
-                self.answered = 0
+            # Next Story although hidden
+            #self.ids.story.text = self.master_kanji.story
 
-                # update current in DB
-                self.master_kanji.updateCurrent(self.next_kanji)
+            #re-init
+            print("Reinit button: no answer")
+            self.next_kanji = False
+            print(self.master_kanji.cur_answer)
+            self.master_kanji.story_show = False
+            self.answered = 0
 
-            # Check given answer
+            # Disable and then Enable send_btn after some seconds
+            self.send_disabled = True
+            Clock.schedule_once(self.cb_disablesend, self.send_disabled_t)
+
+            # update current in DB
+            self.master_kanji.updateCurrent(self.next_kanji)
+
+            # Change sKanji buttons
+            self.changeSKanji()
+
+            # Change story button
+            self.ww_link = "http://kanji.koohii.com/study/kanji/{}".format(self.master_kanji.current)
+
+        # Check given answer
+        else:
+            print("Checking answer...")
+            answer = self.master_kanji.textFormat(answer)
+
+            # Correct answer
+            if self.master_kanji.check(answer):
+                print("Correct answer")
+                self.next_kanji = True
+                # TODO Change button color
+                # Only update when first time answering
+                if self.answered == 0:
+                    self.master_kanji.updateKanji(True)
+                    self.master_kanji.updateCurrent(self.next_kanji, 1)
+
+            # Wrong answer
             else:
-                print("Checking answer...")
-                answer = self.master_kanji.textFormat(answer)
+                print("Wrong answer")
+                # Only update when first time answering
+                if self.answered == 0:
+                    self.master_kanji.updateKanji(False)
+                    self.master_kanji.updateCurrent(self.next_kanji, 0)
+                self.flashred()
 
-                # Correct answer
-                if self.master_kanji.check(answer):
-                    print("Correct answer")
-                    self.next_kanji = True
-                    # TODO Change button color
-                    # Only update when first time answering
-                    if self.answered == 0:
-                        self.master_kanji.updateKanji(True)
-                        self.master_kanji.updateCurrent(self.next_kanji, 1)
-
-                # Wrong answer
-                else:
-                    print("Wrong answer")
-                    # Only update when first time answering
-                    if self.answered == 0:
-                        self.master_kanji.updateKanji(False)
-                        self.master_kanji.updateCurrent(self.next_kanji, 0)
-                    self.flashred()
-
-                # An answer is given changes
-                self.master_kanji.story_show = True
-                self.answered = 1
+            # An answer is given changes
+            self.master_kanji.story_show = True
+            self.answered = 1
 
 
 if __name__ == '__main__':

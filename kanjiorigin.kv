@@ -6,6 +6,12 @@
 #    valign: 'middle'
 #    minimum_width: '60sp'
 
+<ActionLabel>:
+#    text_size: self.width - dp(6), self.height
+    halign: 'center'
+    valign: 'middle'
+    minimum_width: '40sp'
+
 
 <KanjiOriginScreen>:
     ScrollView:
@@ -50,18 +56,18 @@ BoxLayout:
                 # 'Home' + ('' if not app.current_title else ' - {}'.format(app.current_title))
                 on_release: if not sm.current_screen.name == 'MainMenu': app.go_screen(0)
 
-#            ActionSeparator:
-#                # Label:
-#                id:lbl1
-#                text: "Now: {}".format(app.actionbar_status[0])
-#
-#            ActionSeparator:
-#                id:lbl2
-#                text: "Forgot: {}".format(app.actionbar_status[1])
-#
-#            ActionSeparator:
-#                id:lbl3
-#                text: "Left: {}".format(app.actionbar_status[2])
+            ActionLabel:
+                #Label:
+                id:lbl1
+                text: "Now: {}".format(app.actionbar_status[0])
+
+            ActionLabel:
+                id:lbl2
+                text: "Forgot: {}".format(app.actionbar_status[1])
+
+            ActionLabel:
+                id:lbl3
+                text: "Left: {}".format(app.actionbar_status[2])
 
     ScreenManager:
         id: sm
