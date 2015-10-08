@@ -59,15 +59,12 @@ BoxLayout:
             ActionLabel:
                 #Label:
                 id:lbl1
-                text: "Now: {}".format(app.actionbar_status[0])
+                text: "Study: {} | {}".format(app.actionbar_status[0], app.actionbar_status[1])
 
             ActionLabel:
                 id:lbl2
-                text: "Forgot: {}".format(app.actionbar_status[1])
+                text: "Seen: {} / {}".format(app.actionbar_status[2], app.actionbar_status[3])
 
-            ActionLabel:
-                id:lbl3
-                text: "Left: {}".format(app.actionbar_status[2])
 
     ScreenManager:
         id: sm

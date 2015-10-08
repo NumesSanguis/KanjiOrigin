@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = KanjiOrigin2
+title = KanjiOrigin
 
 # (str) Package name
-package.name = KanjiOrigin2Package
+package.name = KanjiOriginPackage
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = deinemuther.org
@@ -13,7 +13,7 @@ package.domain = deinemuther.org
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,db,ttf
+source.include_exts = py,png,jpg,kv,atlas,db,ttf,txt
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -29,7 +29,7 @@ source.exclude_dirs = bin
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.2.0
+version = 0.3.0
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
@@ -88,7 +88,7 @@ android.minapi = 8
 #android.p4a_dir =
 
 # (list) python-for-android whitelist
-#android.p4a_whitelist =
+android.p4a_whitelist = mywhitelist.txt
 
 # (str) Android entry point, default is ok for Kivy-based app
 #android.entrypoint = org.renpy.android.PythonActivity

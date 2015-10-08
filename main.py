@@ -1,7 +1,7 @@
 #!/usr/bin/kivy
 # -*- coding: utf-8 -*-
 
-import os
+#import os
 from time import time
 from kivy.app import App
 from os.path import dirname, join
@@ -11,10 +11,12 @@ from kivy.properties import NumericProperty, StringProperty, BooleanProperty,\
 from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
-from kivy.metrics import dp
+#from kivy.uix.behaviors import FocusBehavior
+#from kivy.metrics import dp
+#import csv
 
 from kivy.utils import platform
-import data.screens.learnkanji_alg as lrnalg
+import data.screens.learnkanji_k_alg as lrnalg
 
 
 class KanjiOriginScreen(Screen):
@@ -32,16 +34,14 @@ class KanjiOriginApp(App):
     current_title = StringProperty()
     time = NumericProperty(0)
     screen_names = ListProperty([])
-
-    learnalg_count = lrnalg.LearnAlg(2)
-    actionbar_status = learnalg_count.countlearned()
+    actionbar_status = ListProperty([0, 0, 0, 0])
 
     def build(self):
         self.title = 'Kanji Origin'
         Clock.schedule_interval(self._update_clock, 1 / 60.)
         self.screens = {}
         self.available_screens = ([
-            'MainMenu', 'LearnKanji', 'LearningMethod', 'Backup', 'Donation', 'Credits'])
+            'MainMenu', 'LearnKanji_k', 'LearningMethod', 'Backup', 'Donation', 'Credits'])
         self.screen_names = self.available_screens
         curdir = dirname(__file__)
         self.available_screens = [join(curdir, 'data', 'screens',
@@ -51,11 +51,22 @@ class KanjiOriginApp(App):
         # Binds the back button on Android
         self.bind(on_start=self.post_build_init)
 
+        # Status bar
+        try:
+            self.learnalg_count = lrnalg.LearnCount()
+            if self.learnalg_count.db_exist:
+                self.actionbar_status = self.learnalg_count.countlearned()
+            else:
+                self.actionbar_status = [-1, -1, -1, -1]
+
+        except:
+            print("Database error or learnkanji_k_alg.py not found")
+
     # Binds the back button on Android
     def post_build_init(self, *args):
-        if platform() == 'android':
-            import android
-            android.map_key(android.KEYCODE_BACK, 1001)
+        # if platform() == 'android':
+        #     import android
+        #     android.map_key(android.KEYCODE_BACK, 1001)
 
         win = Window
         win.bind(on_keyboard=self.my_key_handler)
@@ -63,11 +74,15 @@ class KanjiOriginApp(App):
     def my_key_handler(self, window, keycode1, keycode2, text, modifiers):
         # Esc or Android back button pressed
         if keycode1 in [27, 1001]:
-            # TODO Keyboard open -> close it
+            # Keyboard open -> close it
             #if Window.keyboard_height > dp(25):
             #    window.close()
 
-            # Not in main screen # TODO Kivy screen change -> keyb closed, python screen change -> keyb not closed
+            # if FocusBehavior._keyboards and any(FocusBehavior._keyboards.values()):
+            #     print(FocusBehavior._keyboards.values())
+
+
+            # Not in main screen
             print("self.index: {}".format(self.index))
             if self.index != 0:
                 print("self.index not 0")
@@ -85,7 +100,9 @@ class KanjiOriginApp(App):
         return True
 
     def on_resume(self):
-        pass
+        if self.learnalg_count:
+            if self.learnalg_count.db_exist:
+                self.actionbar_status = self.learnalg_count.countlearned()
 
     def go_screen(self, idx):
         self.index = idx

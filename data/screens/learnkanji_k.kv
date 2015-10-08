@@ -1,0 +1,298 @@
+#:kivy 1.9.1
+#:import Keyboard kivy.factory.Factory
+#:import learnkanji_k data.screens.learnkanji_k
+#:import webbrowser webbrowser
+#:import Clock kivy.clock.Clock
+#:import os os
+
+# kived code
+#<ScaleLabel@Label>:
+#    _scale: 1. if self.texture_size[0] < self.width else float(self.width) / self.texture_size[0]
+#    canvas.before:
+#        Color:
+#            rgba: 1, 1, 1, 1
+#        Rectangle:
+#            pos: self.pos
+#            size: self.size
+#
+#        PushMatrix
+#        Scale:
+#            origin: self.center
+#            x: self._scale or 1.
+#            y: self._scale or 1.
+#    canvas.after:
+#        PopMatrix
+
+<-ScaleLabel@Label>:
+    _scale: 1. if self.texture_size[0] < self.width else float(self.width) / self.texture_size[0]
+    canvas:
+        Color:
+            rgba: self.disabled_color if self.disabled else (self.color if not self.markup else (1, 1, 1, 1))
+
+        PushMatrix
+		Scale:
+			origin: self.center
+			x: self._scale or 1.
+			y: self._scale or 1.
+        Rectangle:
+            texture: self.texture
+            size: self.texture_size
+            pos: int(self.center_x - self.texture_size[0] / 2.), int(self.center_y - self.texture_size[1] / 2.)
+        PopMatrix
+
+
+<-ScaleButton@Button>:
+    padding: [dp(20), dp(10)]
+
+	state_image: self.background_normal if self.state == 'normal' else self.background_down
+	disabled_image: self.background_disabled_normal if self.state == 'normal' else self.background_disabled_down
+	_scale: 1. if self.texture_size[0] < self.width else (float(self.width) / self.texture_size[0])
+	canvas:
+		Color:
+			rgba: self.background_color
+		BorderImage:
+			border: self.border
+			pos: self.pos
+			size: self.size
+			source: self.disabled_image if self.disabled else self.state_image
+		PushMatrix
+		Scale:
+			origin: self.center
+			x: self._scale or 1.
+			y: self._scale or 1.
+		Color:
+			rgba: self.disabled_color if self.disabled else self.color
+		Rectangle:
+			texture: self.texture
+			size: self.texture_size
+			pos: int(self.center_x - self.texture_size[0] / 2.), int(self.center_y - self.texture_size[1] / 2.)
+		PopMatrix
+
+<-SKanjiToggleButton>:
+    font_size: self.height * 0.7
+    group: 'skanji'
+    allow_no_selection: False
+    #font_name: self.lfunc.font_kanji
+    #skanjitext: 'empty'
+    #text: self.skanjitext
+    padding: [dp(5), dp(5)]
+    size_hint_y: None
+    height: dp(50)
+
+    # Call function changeStory in LayoutFunctioning
+    on_state: self.lfunc.changeStory(self.text, self.radical) if self.state == 'down' else False
+
+    state_image: self.background_normal if self.state == 'normal' else self.background_down
+	disabled_image: self.background_disabled_normal if self.state == 'normal' else self.background_disabled_down
+	_scale: 1. if self.texture_size[0] < self.width else (float(self.width) / self.texture_size[0])
+	canvas:
+		Color:
+			rgba: self.background_color
+		BorderImage:
+			border: self.border
+			pos: self.pos
+			size: self.size
+			source: self.disabled_image if self.disabled else self.state_image
+		PushMatrix
+		Scale:
+			origin: self.center
+			x: self._scale or 1.
+			y: self._scale or 1.
+		Color:
+			rgba: self.disabled_color if self.disabled else self.color
+		Rectangle:
+			texture: self.texture
+			size: self.texture_size
+			pos: int(self.center_x - self.texture_size[0] / 2.), int(self.center_y - self.texture_size[1] / 2.)
+		PopMatrix
+
+<LayoutFunctioning>
+    id: lfunc
+    orientation: 'vertical'
+
+    #Widget with the to be learned Kanji
+
+    BoxLayout:
+        size_hint: 1, 0.06
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            size_hint_x: .75
+            text: str(lfunc.master_kanji.cur_framenum)
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+            padding: [dp(4), dp(0)]
+            color: 0, 0, 0, 1
+            opacity: 1 if lfunc.answered else 0
+
+        ScaleButton:
+            size_hint_x: .25
+            text: "Copy Kanji"
+            opacity: 1 if lfunc.answered else 0
+            on_release: lfunc.cpClipboard()
+
+
+    ScaleLabel:
+        id: learn_kanji
+        size_hint: 1, 0.36
+        font_size: self.height * 0.95  # sp(160)*self.height*sp(0.006)  # '160sp'
+        font_name: lfunc.font_kanji
+        text: lfunc.master_kanji.cur_framekanji
+        #text_size: self.width, None
+        color: 0, 0, 0, 1
+        #size: self.texture_size
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+
+    #A button with the correct answers (hidden at first)
+    ScaleButton:
+        id: answer_bar
+        size_hint: 1, 0.09
+        font_size: self.height *.6  # if self.texture_size[0] < self.width else
+        # if self.texture_size[0] < self.width else self.height*.8  # (self.width*2)/(self.height+0.1)  # '16sp'
+        text: ', '.join(lfunc.master_kanji.cur_answer)
+        background_color: (0, 0.7, 0, 1) if lfunc.next_kanji else (0.7, 0, 0, 1)
+        opacity: 1 if lfunc.answered else 0
+        padding: [dp(20), dp(10)]
+
+    #Containing the text-input widget and send button
+    BoxLayout:
+        size_hint_y: 0.09
+        orientation: 'horizontal'
+
+        AnswerTextInput:
+            id: txt_field
+            #design1:design1
+            text: lfunc.master_kanji.fix_answer
+            font_size: self.height * .6  # '20sp'
+            #font_name: root.font_kanji
+            hint_text: "Type English meaning"
+            multiline: False
+            size_hint_x: .8
+            #on_text: self.root.autoCorrectText()
+            focus: lfunc.txt_field_focus_i  # TODO Not used?
+            #on_focus: Clock.schedule_once(lambda dt: lfunc.storykeybheight()) if(args[1]) else False
+            #lfunc.storykeybheight() if(args[1]) else False  # TODO run at initialization
+            padding: [5, ( self.height - self.line_height ) / 2]
+            #border: 16, 16, 16, 16  # TODO not working, flash red when wrong
+            background_color: (1, .85, .85, 1) if (lfunc.answered and not lfunc.next_kanji) else (1, 1, 1, 1)
+            on_text: lfunc.disablesend(False) if self.text != "" and lfunc.send_disabled == True else None
+            on_text_validate: lfunc.btnPressed(txt_field.text)
+            on_text_validate: txt_field.resettext(lfunc.next_kanji)
+
+        ScaleButton:
+            id: send_btn
+            size_hint_x: .3
+            font_size: self.height *.5  # '14sp'
+            text: "Next" if (lfunc.next_kanji) else "Check"
+            #background_normal = ''
+            background_color: (.5, 1, .5, 1) if (lfunc.next_kanji) else (1, 1, 1, 1)
+            disabled: lfunc.send_disabled
+
+            #Calls function for handling typed text
+            on_release: lfunc.btnPressed(txt_field.text)
+            on_release: txt_field.resettext(lfunc.next_kanji)
+
+    #Containing STORY from DATABASE and small Kanji buttons
+    BoxLayout:
+        id: story_box
+        size_hint: 1, None
+        #size: 1, root.keyb_height
+        height: lfunc.keyb_height
+        #height: Keyboard.keyboard_height
+        orientation: 'horizontal'
+
+        #STORY about the to be learned Kanji (or small Kanji's)
+        BoxLayout:
+            size_hint_x: .8
+            orientation: 'vertical'
+            canvas.before:
+                Color:
+                    rgba: .95, .95, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+
+            ScrollView:
+                id: story
+                size_hint_y: .8
+                Label:
+                    text: lfunc.master_kanji.story if lfunc.master_kanji.story_show else lfunc.master_kanji.story_hidden
+                    font_size: '16sp'
+                    text_size: self.width-10, None
+                    font_name: lfunc.font_kanji
+                    line_height: 1.1
+                    markup: True
+                    #blurs text:
+                    size_hint_y: None
+                    #pos: self.parent.width*.2, self.parent.height*.8
+                    #size: self.parent.size[0] * .05, self.parent.size[1] * .05
+                    #size = size_hint * parent.size, pos = pos_hint * parent.size
+                    height: int(self.texture_size[1]+10)
+                    valign: 'top'
+                    color: 0, 0, 0, 1
+
+            ScaleButton:
+                size_hint_y: .2
+                text: "More stories at Kanji Koohii"
+                font_size: self.height *.3
+                padding: [dp(20), dp(10)]
+                on_release: webbrowser.open(lfunc.ww_link)
+
+        ScrollView:  # Blurs buttons
+            size_hint_x: .2
+
+            GridLayout:
+                id: sKanjibox
+                #orientation: 'vertical'
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+
+#                Button:
+#                    text: 'N'
+#                    on_release: lfunc.addsKanji()
+#                    size_hint_y: None
+#                    height: dp(50)
+#
+#                Button:
+#                    text: 'D'
+#                    id: del
+#                    on_release: lfunc.delsKanji()
+#                    size_hint_y: None
+#                    height: dp(50)
+
+                SKanjiToggleButton:
+                    id: togglemain
+                    #skanjitext: self.text  # lfunc.master_kanji.cur_framekanji  # '好'
+                    lfunc: root
+                    #font_name: lfunc.font_kanji
+                    text: lfunc.master_kanji.cur_framekanji
+                    radical: False
+                    state: 'down'
+
+
+#                SKanjiToggleButton:
+#                    #skanjitext: 'derp'
+#                    lfunc: root
+#                    text: "test"
+#                    #on_state: lfunc.changeStory(self.skanjitext) if self.state == 'down' else False
+
+
+KanjiOriginScreen:
+    name: 'LearnKanji_k'
+    fullscreen: True
+
+    LayoutFunctioning
