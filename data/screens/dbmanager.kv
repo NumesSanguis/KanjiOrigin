@@ -1,0 +1,11 @@
+#:kivy 1.9.0
+#:import dbmanager data.screens.dbmanager
+
+KanjiOriginScreen:
+    name: 'DBmanager'
+    fullscreen: True
+
+    DatabaseManager:
+        id: dbm
+        on_current_screen:
+            idx = self.screen_names.index(args[1].name)
