@@ -1,0 +1,103 @@
+#:kivy 1.9.0
+#:import resetko data.screens.db_kv.resetko
+
+<ResetKO>:
+    popreset: popreset.__self__
+    popundo: popundo.__self__
+    popfail: popfail.__self__
+    name: 'ResetKO'
+
+    BoxLayoutS:
+        id: resetko
+        orientation: 'vertical'
+
+        Popup:
+            id: popreset
+            title: "Confirm reset"
+            on_parent:
+                if self.parent == resetko: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayoutS:
+                orientation: 'vertical'
+
+                RstDocument:
+                    text: root.poplbtext
+                    size_hint_y: .7
+
+                BoxLayoutS:
+                    orientation: 'horizontal'
+                    size_hint_y: .3
+
+                    Button:
+                        text: 'RESET Kanji Origin'
+                        on_release: root.ResetApp()
+                        size_hint_x: .7
+                    Button:
+                        text: 'Cancel'
+                        on_release: popreset.dismiss()
+                        size_hint_x: .3
+
+        Popup:
+            id: popundo
+            title: "Confirm undo"
+            on_parent:
+                if self.parent == resetko: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayoutS:
+                orientation: 'vertical'
+
+                RstDocument:
+                    text: root.poplbtext
+                    size_hint_y: .7
+
+                BoxLayoutS:
+                    orientation: 'horizontal'
+                    size_hint_y: .3
+
+                    Button:
+                        text: 'UNDO reset KO'
+                        on_release: root.UndoReset()
+                        size_hint_x: .7
+                    Button:
+                        text: 'Cancel'
+                        on_release: popundo.dismiss()
+                        size_hint_x: .3
+
+        Popup:
+            id: popfail
+            title: "Undo reset failed"
+            on_parent:
+                if self.parent == resetko: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayoutS:
+                orientation: 'vertical'
+
+                RstDocument:
+                    text: root.popfailtext
+                    size_hint_y: .7
+
+                Button:
+                    text: 'Close'
+                    on_release: popfail.dismiss()
+                    size_hint_y: .3
+
+        RstDocument:
+            text: root.lbtext
+
+        BoxLayoutS:
+            size_hint_y: .3
+            padding: '0dp', '7dp', '0dp', '0dp'
+
+            Button:
+                size_hint_x: 1.7
+                text: root.rstext
+                background_color: (1, .5, .5, 1)
+                on_release: root.popreset.open()
+
+            Button:
+                #size_hint_x: .3
+                text: root.urstext
+                on_release: root.popundo.open()

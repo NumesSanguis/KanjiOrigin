@@ -1,0 +1,45 @@
+#:kivy 1.9.0
+#:import restoresd data.screens.db_kv.restoresd
+
+<RestoreSD>:
+    poprestore: poprestore.__self__
+    name: 'RestoreSD'
+
+    BoxLayoutS:
+        id: restoresd
+        orientation: 'vertical'
+
+        Popup:
+            id: poprestore
+            title: "Confirm restore"
+            on_parent:
+                if self.parent == restoresd: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayoutS:
+                orientation: 'vertical'
+
+                RstDocument:
+                    text: root.poplbtext
+                    size_hint_y: .7
+
+                BoxLayoutS:
+                    orientation: 'horizontal'
+                    size_hint_y: .3
+
+                    Button:
+                        text: 'Restore learning process'
+                        on_release: root.callback()
+                        size_hint_x: .7
+                    Button:
+                        text: 'Cancel'
+                        on_release: poprestore.dismiss()
+                        size_hint_x: .3
+
+        RstDocument:
+            text: root.lbtext
+
+        Button:
+            text: root.bttext
+            on_release: root.poprestore.open()
+            size_hint_y: .3

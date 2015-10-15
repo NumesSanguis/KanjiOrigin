@@ -1,0 +1,38 @@
+#:kivy 1.9.0
+#:import backupsd data.screens.db_kv.backupsd
+
+<BackupSD>:
+    popbackup: popbackup.__self__
+    name: 'BackupSD'
+
+    BoxLayoutS:
+        id: backupsd
+        orientation: 'vertical'
+
+        Popup:
+            id: popbackup
+            title: "Backup succeeded"
+            on_parent:
+                if self.parent == backupsd: self.parent.remove_widget(self)
+            size_hint: [.9, .7]
+
+            BoxLayoutS:
+                spacing: '14dp'
+                orientation: 'vertical'
+
+                RstDocument:
+                    text: root.poplbtext
+                    size_hint_y: .7
+
+                Button:
+                    text: 'Close'
+                    on_release: popbackup.dismiss()
+                    size_hint_y: .3
+
+        RstDocument:
+            text: root.lbtext
+
+        Button:
+            text: root.bttext
+            on_release: root.callback()
+            size_hint_y: .3
