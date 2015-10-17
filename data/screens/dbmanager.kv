@@ -1,19 +1,15 @@
 #:kivy 1.9.1
 #:import dbmanager data.screens.dbmanager
 
-#<DBScreen>:
-##    AnchorLayout:
-##        size_hint_y: None
-##        height: max(root.height, content.height)
-#    BoxLayout:
-#        id: content
-#        orientation: 'vertical'
-#        spacing: '16dp'
-#        padding: ['8dp', '24dp']
+<BoxLayoutS@BoxLayout>:
+    spacing: '14dp'
 
 KanjiOriginScreen:
     name: 'DBmanager'
+    id: dbms
     fullscreen: True
+    has_screenmanager: True
+    on_pre_enter: app.ac_prev.on_release = app.screen_changer()
 
     DatabaseManager:
         id: dbm

@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 #import os
-from time import time
 from kivy.app import App
 from os.path import dirname, join
 from kivy.lang import Builder
 from kivy.properties import NumericProperty, StringProperty, BooleanProperty,\
-    ListProperty
+    ListProperty, ObjectProperty
 #from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
@@ -16,11 +15,13 @@ from kivy.core.window import Window
 #import csv
 #from kivy.utils import platform
 import data.screens.learnkanji_k_alg as lrnalg
+#from kivy.resources import resource_add_path
 
 
 # Screen used by main ScreenManager
 class KanjiOriginScreen(Screen):
     fullscreen = BooleanProperty(False)
+    has_screenmanager = BooleanProperty(False)
 
     # 'content' refers to the id of the GridLayout in KanjiOriginScreen in kanjiorigin.kv
     def add_widget(self, *args):
@@ -38,6 +39,7 @@ class KanjiOriginApp(App):
     time = NumericProperty(0)
     screen_names = ListProperty([])
     actionbar_status = ListProperty([0, 0, 0, 0])
+    ac_prev = ObjectProperty(None)
 
     def build(self):
         self.title = 'Kanji Origin'
@@ -45,6 +47,8 @@ class KanjiOriginApp(App):
 
         # Relative import
         # resource_add_path(os.path.join(os.path.dirname(__file__), 'data'))
+        # resource_add_path(os.path.join('data', 'screens'))
+        # resource_add_path(os.path.join('screens', 'db_kv'))
 
         # Setting up screens for screen manager
         self.screens = {}
@@ -89,20 +93,29 @@ class KanjiOriginApp(App):
             # if FocusBehavior._keyboards and any(FocusBehavior._keyboards.values()):
             #     print(FocusBehavior._keyboards.values())
 
+            self.screen_changer()
 
-            # Not in main screen
-            print("self.index: {}".format(self.index))
-            if self.index != 0:
-                print("self.index not 0")
-                self.go_screen(0)
-                return True
-            # In main screen
-            else:
-                print("self.index 0")
-                print("Closing App")
-                App.get_running_app().stop()
+        return True
 
-        return False
+    def screen_changer(self):
+        # Not in main screen
+        print("self.index: {}".format(self.index))
+        if self.index != 0:
+            print("Moving screen back")
+            print(self.screens[self.index])
+            # if self.screens[self.index].has_screenmanger == True:
+            #     pass
+            # else:
+            print("self.index not 0")
+            self.go_screen(0)
+            #return True
+        # In main screen
+        else:
+            print("self.index 0")
+            print("Closing App")
+            App.get_running_app().stop()
+
+
 
     # Keeps the app running in the background
     def on_pause(self):

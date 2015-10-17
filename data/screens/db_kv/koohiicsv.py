@@ -4,7 +4,7 @@
 from kivy.uix.screenmanager import  Screen
 
 
-class koohiiCSV(Screen):
+class KoohiiCSV(Screen):
     lbtext = "Not working yet. In the future you can here import your own stories in collabaration with " \
              "kanji.koohii.com/"
     bttext = "Not working yet"

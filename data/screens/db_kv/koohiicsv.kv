@@ -1,17 +1,18 @@
-#:kivy 1.9.0
+#:kivy 1.9.1
 #:import koohiicsv data.screens.db_kv.koohiicsv
 
-<koohiiCSV>:
-    name: 'koohiiCSV'
 
-#    BoxLayoutS:
-#        orientation: 'vertical'
-#
-#        RstDocument:
-#            text: root.lbtext
-#
-#        Button:
-#            text: root.bttext
-#            on_release: root.callback()
-#            size_hint_y: .3
-#            disabled: True  # delete when function does something
+KoohiiCSV:
+    name: 'KoohiiCSV'
+
+    BoxLayoutS:
+        orientation: 'vertical'
+
+        RstDocument:
+            text: root.lbtext
+
+        Button:
+            text: root.bttext
+            on_release: root.callback()
+            size_hint_y: .3
+            disabled: True  # delete when function does something
