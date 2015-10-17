@@ -4,6 +4,8 @@
 
 KoohiiCSV:
     name: 'KoohiiCSV'
+    on_pre_enter: app.root.ids.actp.ac_prev = self.parent
+    #on_pre_leave: app.root.ids.actp.ac_prev = app
 
     BoxLayoutS:
         orientation: 'vertical'

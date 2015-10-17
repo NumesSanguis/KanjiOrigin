@@ -4,6 +4,7 @@
 BackupSD:
     popbackup: popbackup.__self__
     name: 'BackupSD'
+    on_pre_enter: app.root.ids.actp.ac_prev = self.parent
 
     BoxLayout:
         id: backupsd

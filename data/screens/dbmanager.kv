@@ -10,8 +10,12 @@ KanjiOriginScreen:
     fullscreen: True
     #has_screenmanager: True
     #on_pre_enter: app.root.ids.actp.on_release = app.screen_changer()
+    on_pre_enter: app.root.ids.actp.ac_prev = app
 
     DatabaseManager:
         id: dbm
+        #app.root.ids.actp.ac_prev: root
+        #switch_to: self.go_screen(0)
+
         on_current_screen:
             idx = self.screen_names.index(args[1].name)

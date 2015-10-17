@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from os.path import dirname, join
+from kivy.app import App
 #from kivy.resources import resource_find
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager

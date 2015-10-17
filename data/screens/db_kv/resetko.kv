@@ -6,6 +6,7 @@ ResetKO:
     popundo: popundo.__self__
     popfail: popfail.__self__
     name: 'ResetKO'
+    on_pre_enter: app.root.ids.actp.ac_prev = self.parent
 
     BoxLayoutS:
         id: resetko

@@ -22,6 +22,7 @@ import data.screens.learnkanji_k_alg as lrnalg
 class KanjiOriginScreen(Screen):
     fullscreen = BooleanProperty(False)
     #has_screenmanager = BooleanProperty(False)
+    # If there is a ScreenManager in a ScreenManager
     ac_prev = ObjectProperty(None)
 
     # 'content' refers to the id of the GridLayout in KanjiOriginScreen in kanjiorigin.kv
@@ -40,7 +41,7 @@ class KanjiOriginApp(App):
     time = NumericProperty(0)
     screen_names = ListProperty([])
     actionbar_status = ListProperty([0, 0, 0, 0])
-    #ac_prev = ObjectProperty(None)
+    ac_prev = ObjectProperty(None)
 
     def build(self):
         self.title = 'Kanji Origin'
@@ -95,11 +96,11 @@ class KanjiOriginApp(App):
             # if FocusBehavior._keyboards and any(FocusBehavior._keyboards.values()):
             #     print(FocusBehavior._keyboards.values())
 
-            return(self.screen_changer())
+            return(self.screen_changer(True))
 
         #return True
 
-    def screen_changer(self):
+    def screen_changer(self, kill=False):
         # Not in main screen
         print("self.index: {}".format(self.index))
         if self.index != 0:
@@ -116,8 +117,10 @@ class KanjiOriginApp(App):
         # In main screen
         else:
             print("self.index 0")
-            print("Closing App")
-            App.get_running_app().stop()
+            # Don't kill app when ActionPrevious is pressed
+            if kill == True:
+                print("Closing App")
+                App.get_running_app().stop()
 
 
 

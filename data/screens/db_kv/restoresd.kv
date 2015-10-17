@@ -4,6 +4,7 @@
 RestoreSD:
     poprestore: poprestore.__self__
     name: 'RestoreSD'
+    on_pre_enter: app.root.ids.actp.ac_prev = self.parent
 
     BoxLayoutS:
         id: restoresd
