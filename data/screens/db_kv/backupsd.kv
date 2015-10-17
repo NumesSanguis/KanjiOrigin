@@ -5,7 +5,7 @@
     popbackup: popbackup.__self__
     name: 'BackupSD'
 
-    BoxLayoutS:
+    BoxLayout:
         id: backupsd
         orientation: 'vertical'
 
@@ -16,7 +16,7 @@
                 if self.parent == backupsd: self.parent.remove_widget(self)
             size_hint: [.9, .7]
 
-            BoxLayoutS:
+            BoxLayout:
                 spacing: '14dp'
                 orientation: 'vertical'
 

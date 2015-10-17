@@ -1,27 +1,31 @@
-<MainButton@Button>:
-    size_hint_y: None
-	height: '60dp'
+#:kivy 1.9.1
+
+#<MainButton@Button>:
+    #size_hint_y: None
+    #height: '60dp'
+    #size: self.width, '60dp'
+    #pos_hint: {'center_y': .5}
 
 KanjiOriginScreen:
-	name: 'MainMenu'
-	#fullscreen: True
+    name: 'MainMenu'
+    #fullscreen: True
 
-	MainButton:
-		text: 'Learn Kanji'
-		on_release: app.go_screen(1)
+    ScaleButton:
+        text: 'Learn Kanji'
+        on_release: app.go_screen(1)
 
-	MainButton:
-		text: 'Learning method info'
-		on_release: app.go_screen(2)
+    ScaleButton:
+        text: 'Learning method info'
+        on_release: app.go_screen(2)
 
-	MainButton:
-	    text: 'Backup & Restore'
-	    on_release: app.go_screen(3)
+    ScaleButton:
+        text: 'Backup & Restore'
+        on_release: app.go_screen(3)
 
-	MainButton:
-		text: 'Donation :D'
-		on_release: app.go_screen(4)
+    ScaleButton:
+        text: 'Donation :D'
+        on_release: app.go_screen(4)
 
-    MainButton:
-		text: 'Credits'
-		on_release: app.go_screen(5)
+    ScaleButton:
+        text: 'Credits'
+        on_release: app.go_screen(5)

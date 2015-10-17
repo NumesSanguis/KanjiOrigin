@@ -18,10 +18,11 @@ from kivy.core.window import Window
 import data.screens.learnkanji_k_alg as lrnalg
 
 
-# Screen manager
+# Screen used by main ScreenManager
 class KanjiOriginScreen(Screen):
     fullscreen = BooleanProperty(False)
 
+    # 'content' refers to the id of the GridLayout in KanjiOriginScreen in kanjiorigin.kv
     def add_widget(self, *args):
         if 'content' in self.ids:
             return self.ids.content.add_widget(*args)
@@ -41,6 +42,9 @@ class KanjiOriginApp(App):
     def build(self):
         self.title = 'Kanji Origin'
         #Clock.schedule_interval(self._update_clock, 1 / 60.)
+
+        # Relative import
+        # resource_add_path(os.path.join(os.path.dirname(__file__), 'data'))
 
         # Setting up screens for screen manager
         self.screens = {}

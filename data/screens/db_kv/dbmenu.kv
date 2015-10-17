@@ -1,7 +1,25 @@
-#:kivy 1.9.0
+#:kivy 1.9.1
 
-DBScreen:
-    name: 'DBmenu'
+KanjiOriginScreen:
+    name: 'dbmenu'
+    #fullscreen: True
 
-    Button:
-        text: "test"
+#    BoxLayout:  # Should specify this in dbmanager.kv
+#        orientation: 'vertical'
+#        spacing: '14dp'
+
+    ScaleButton:
+        text: "Backup to SD-card info"
+        on_release: self.parent.parent.parent.go_screen(1)
+
+    ScaleButton:
+        text: "Restore from SD-card info"
+        on_release: self.parent.parent.parent.go_screen(2)
+
+    ScaleButton:
+        text: "Import .csv koohii info"
+        on_release: self.parent.parent.parent.go_screen(3)
+
+    ScaleButton:
+        text: "Reset KanjiOrigin info"
+        on_release: self.parent.parent.parent.go_screen(4)
