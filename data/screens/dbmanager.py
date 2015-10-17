@@ -54,11 +54,10 @@ class DatabaseManager(ScreenManager):
         return super(DatabaseManager, self).add_widget(*args)
 
     def my_key_handler(self, window, keycode1, keycode2, text, modifiers):
-        print("Esc or back button pressed")
-
         # Esc or Android back button pressed
         if keycode1 in [27, 1001]:
-            self.screen_changer()
+            print("Esc or back button pressed")
+            return(self.screen_changer())
 
     def screen_changer(self):
         # Not in main screen
@@ -69,11 +68,13 @@ class DatabaseManager(ScreenManager):
             print("self.index not 0")
             self.go_screen(0)
             # Tell that the key is handled, so not calling the same function in the main.py
-            return True
+            return(True)
+
         # In main screen
         else:
             print("self.index 0")
             print("Going back to main menu")
+            return(False)
             #App.get_running_app().stop()
 
     # Go to other screen

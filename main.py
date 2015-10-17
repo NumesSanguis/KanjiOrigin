@@ -21,7 +21,8 @@ import data.screens.learnkanji_k_alg as lrnalg
 # Screen used by main ScreenManager
 class KanjiOriginScreen(Screen):
     fullscreen = BooleanProperty(False)
-    has_screenmanager = BooleanProperty(False)
+    #has_screenmanager = BooleanProperty(False)
+    ac_prev = ObjectProperty(None)
 
     # 'content' refers to the id of the GridLayout in KanjiOriginScreen in kanjiorigin.kv
     def add_widget(self, *args):
@@ -39,7 +40,7 @@ class KanjiOriginApp(App):
     time = NumericProperty(0)
     screen_names = ListProperty([])
     actionbar_status = ListProperty([0, 0, 0, 0])
-    ac_prev = ObjectProperty(None)
+    #ac_prev = ObjectProperty(None)
 
     def build(self):
         self.title = 'Kanji Origin'
@@ -86,6 +87,7 @@ class KanjiOriginApp(App):
     def my_key_handler(self, window, keycode1, keycode2, text, modifiers):
         # Esc or Android back button pressed
         if keycode1 in [27, 1001]:
+            print("Esc or back button pressed")
             # Keyboard open -> close it
             #if Window.keyboard_height > dp(25):
             #    window.close()
@@ -93,9 +95,9 @@ class KanjiOriginApp(App):
             # if FocusBehavior._keyboards and any(FocusBehavior._keyboards.values()):
             #     print(FocusBehavior._keyboards.values())
 
-            self.screen_changer()
+            return(self.screen_changer())
 
-        return True
+        #return True
 
     def screen_changer(self):
         # Not in main screen
@@ -108,7 +110,9 @@ class KanjiOriginApp(App):
             # else:
             print("self.index not 0")
             self.go_screen(0)
-            #return True
+            # Tell that the key is handled, so not closing app
+            return True
+
         # In main screen
         else:
             print("self.index 0")

@@ -80,7 +80,7 @@ BoxLayout:
 
             ActionPrevious:
                 id: actp
-                ac_prev: self
+                #ac_prev: self
                 #app_icon: 'path/' #App icon
                 with_previous: (False if sm.current_screen.name == 'MainMenu' else True) if sm.current_screen else False
                 title: ('Home' if not sm.current_screen.name == 'MainMenu' else '') if sm.current_screen else ''
