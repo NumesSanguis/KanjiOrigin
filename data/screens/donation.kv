@@ -1,13 +1,14 @@
 KanjiOriginScreen:
-	name: 'Donation'
-	fullscreen: True
-	#on_parent: if not args[1]: textinput.focus = False
+    name: 'Donation'
+    fullscreen: True
+    #on_parent: if not args[1]: textinput.focus = False
 
     RstDocument:
-	    text:
-	        ('.. _top:\n'
-			'\n'
-			'Donation\n'
-			'========\n'
-			'\n'
-			'Gives ``me`` **monez** *pl0x* .\n\n')
+        base_font_size: 28 + self.height*.005  # default 31
+        text:
+            ('.. _top:\n'
+            '\n'
+            'Donation\n'
+            '========\n'
+            '\n'
+            'Gives ``me`` **monez** *pl0x* .\n\n')

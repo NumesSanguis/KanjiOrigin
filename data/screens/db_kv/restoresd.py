@@ -13,9 +13,9 @@ from jnius import autoclass  # SDcard Android
 
 class RestoreSD(Screen):
     lbtext = "Restore a learning process backup from SD-card." \
-             "The app looks in sdcard/KanjiOrigin/ for Kanji-story_bak.db ."
+             "The app looks in sdcard/KanjiOrigin/ for Kanji-story_bak.db."
     bttext = "Restore learning process"
-    poplbtext = "Are you sure you wish to overwrite the current learning process" \
+    poplbtext = "Are you sure you wish to overwrite the current learning process " \
                 "by your backup on the SD card?\n\n" \
                 "Kanji Origin will close after performing this action."
 

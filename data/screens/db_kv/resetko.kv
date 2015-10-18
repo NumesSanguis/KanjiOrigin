@@ -25,16 +25,17 @@ ResetKO:
                 RstDocument:
                     text: root.poplbtext
                     size_hint_y: .7
+                    base_font_size: 28 + self.height*.01  # default 31
 
                 BoxLayoutS:
                     orientation: 'horizontal'
                     size_hint_y: .3
 
-                    Button:
+                    ScaleButton:
                         text: 'RESET Kanji Origin'
                         on_release: root.ResetApp()
                         size_hint_x: .7
-                    Button:
+                    ScaleButton:
                         text: 'Cancel'
                         on_release: popreset.dismiss()
                         size_hint_x: .3
@@ -50,18 +51,19 @@ ResetKO:
                 orientation: 'vertical'
 
                 RstDocument:
-                    text: root.poplbtext
+                    text: root.popurstext
                     size_hint_y: .7
+                    base_font_size: 28 + self.height*.01  # default 31
 
                 BoxLayoutS:
                     orientation: 'horizontal'
                     size_hint_y: .3
 
-                    Button:
+                    ScaleButton:
                         text: 'UNDO reset KO'
                         on_release: root.UndoReset()
                         size_hint_x: .7
-                    Button:
+                    ScaleButton:
                         text: 'Cancel'
                         on_release: popundo.dismiss()
                         size_hint_x: .3
@@ -79,26 +81,28 @@ ResetKO:
                 RstDocument:
                     text: root.popfailtext
                     size_hint_y: .7
+                    base_font_size: 28 + self.height*.01  # default 31
 
-                Button:
+                ScaleButton:
                     text: 'Close'
                     on_release: popfail.dismiss()
                     size_hint_y: .3
 
         RstDocument:
             text: root.lbtext
+            base_font_size: 28 + self.height*.005  # default 31
 
         BoxLayoutS:
             size_hint_y: .3
             padding: '0dp', '7dp', '0dp', '0dp'
 
-            Button:
+            ScaleButton:
                 size_hint_x: 1.7
                 text: root.rstext
                 background_color: (1, .5, .5, 1)
                 on_release: root.popreset.open()
 
-            Button:
+            ScaleButton:
                 #size_hint_x: .3
                 text: root.urstext
                 on_release: root.popundo.open()

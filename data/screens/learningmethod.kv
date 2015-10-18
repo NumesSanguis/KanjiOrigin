@@ -1,13 +1,14 @@
 KanjiOriginScreen:
-	name: 'LearningMethod'
-	fullscreen: True
-	#on_parent: if not args[1]: textinput.focus = False
+    name: 'LearningMethod'
+    fullscreen: True
+    #on_parent: if not args[1]: textinput.focus = False
 
     RstDocument:
-	    text:
-	        ('.. _top:\n'
-			'\n'
-			'Learning Method\n'
-			'===============\n'
-			'\n'
-			'*Why this learning method is effective*.\n\n')
+        base_font_size: 28 + self.height*.005  # default 31
+        text:
+            ('.. _top:\n'
+            '\n'
+            'Learning Method\n'
+            '===============\n'
+            '\n'
+            '*Why this learning method is effective*.\n\n')

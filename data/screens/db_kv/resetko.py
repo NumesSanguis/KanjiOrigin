@@ -23,7 +23,7 @@ class ResetKO(Screen):
     urstext = "UNDO RESET"
     poplbtext = "Are you sure you want to reset Kanji Origin to default AND did you make a backup to SD card?" \
                 "\n\nKanji Origin will be closed after reset is completed."
-    popurstext = "Only continue if you want to restore learning process AND" \
+    popurstext = "Only continue if you want to restore learning process AND " \
                  "you didn't make a backup to SD card\n\n" \
                  "Kanji Origin will close after undo reset completion."
     popfailtext = "Restoring reset database backup failed, database not found.\n\n" \

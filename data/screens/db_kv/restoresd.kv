@@ -23,24 +23,26 @@ RestoreSD:
                 RstDocument:
                     text: root.poplbtext
                     size_hint_y: .7
+                    base_font_size: 28 + self.height*.01  # default 31
 
                 BoxLayoutS:
                     orientation: 'horizontal'
                     size_hint_y: .3
 
-                    Button:
+                    ScaleButton:
                         text: 'Restore learning process'
                         on_release: root.callback()
                         size_hint_x: .7
-                    Button:
+                    ScaleButton:
                         text: 'Cancel'
                         on_release: poprestore.dismiss()
                         size_hint_x: .3
 
         RstDocument:
             text: root.lbtext
+            base_font_size: 28 + self.height*.005  # default 31
 
-        Button:
+        ScaleButton:
             text: root.bttext
             on_release: root.poprestore.open()
             size_hint_y: .3

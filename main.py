@@ -60,7 +60,7 @@ class KanjiOriginApp(App):
         curdir = dirname(__file__)
         self.available_screens = [join(curdir, 'data', 'screens',
             '{}.kv'.format(fn)) for fn in self.available_screens]
-        self.go_screen(0)
+        self.go_screen(0)  # Clock.schedule_once(lambda dt: )
 
         # Binds the back button on Android
         self.bind(on_start=self.post_build_init)

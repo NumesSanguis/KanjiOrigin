@@ -12,8 +12,9 @@ KoohiiCSV:
 
         RstDocument:
             text: root.lbtext
+            base_font_size: 28 + self.height*.005  # default 31
 
-        Button:
+        ScaleButton:
             text: root.bttext
             on_release: root.callback()
             size_hint_y: .3

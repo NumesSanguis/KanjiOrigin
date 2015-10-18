@@ -6,7 +6,7 @@ BackupSD:
     name: 'BackupSD'
     on_pre_enter: app.root.ids.actp.ac_prev = self.parent
 
-    BoxLayout:
+    BoxLayoutS:
         id: backupsd
         orientation: 'vertical'
 
@@ -17,23 +17,25 @@ BackupSD:
                 if self.parent == backupsd: self.parent.remove_widget(self)
             size_hint: [.9, .7]
 
-            BoxLayout:
+            BoxLayoutS:
                 spacing: '14dp'
                 orientation: 'vertical'
 
                 RstDocument:
                     text: root.poplbtext
                     size_hint_y: .7
+                    base_font_size: 28 + self.height*.01  # default 31
 
-                Button:
+                ScaleButton:
                     text: 'Close'
                     on_release: popbackup.dismiss()
                     size_hint_y: .3
 
         RstDocument:
             text: root.lbtext
+            base_font_size: 28 + self.height*.005  # default 31
 
-        Button:
+        ScaleButton:
             text: root.bttext
             on_release: root.callback()
             size_hint_y: .3
