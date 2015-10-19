@@ -4,6 +4,7 @@
 #:import webbrowser webbrowser
 #:import Clock kivy.clock.Clock
 #:import os os
+#:import platform kivy
 
 # kived code
 #<ScaleLabel@Label>:
@@ -189,8 +190,9 @@
             #border: 16, 16, 16, 16  # TODO not working, flash red when wrong
             background_color: (1, .85, .85, 1) if (lfunc.answered and not lfunc.next_kanji) else (1, 1, 1, 1)
             on_text: lfunc.disablesend(False) if self.text != "" and lfunc.send_disabled == True else None
-            on_text_validate: lfunc.btnPressed(txt_field.text)
-            on_text_validate: txt_field.resettext(lfunc.next_kanji)
+            # btnPressed not
+            on_text_validate: lfunc.btnPressed(self.text) if send_btn.disabled == False and (platform == 'android' or platform == 'ios') else None
+            on_text_validate: txt_field.resettext(lfunc.next_kanji) if send_btn.disabled == False else None
 
         ScaleButton:
             id: send_btn

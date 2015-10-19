@@ -17,6 +17,8 @@ from kivy.core.window import Window
 import data.screens.learnkanji_k_alg as lrnalg
 #from kivy.resources import resource_add_path
 
+from kivy import platform
+
 
 # Screen used by main ScreenManager
 class KanjiOriginScreen(Screen):
@@ -45,6 +47,11 @@ class KanjiOriginApp(App):
 
     def build(self):
         self.title = 'Kanji Origin'
+
+        if platform != 'android' and platform != 'ios':
+            from kivy.core.window import Window
+            Window.size = (600, 720)
+
         #Clock.schedule_interval(self._update_clock, 1 / 60.)
 
         # Relative import

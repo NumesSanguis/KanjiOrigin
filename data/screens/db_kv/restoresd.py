@@ -7,8 +7,6 @@ from os.path import isfile
 from kivy.uix.screenmanager import Screen
 import string
 import sqlite3
-from jnius import autoclass  # SDcard Android
-#pyobjus #SDcard IOS
 
 
 class RestoreSD(Screen):
@@ -21,6 +19,9 @@ class RestoreSD(Screen):
 
     # Get path to SD card
     try:
+        # from kivy import platform
+        from jnius import autoclass  # SDcard Android
+        #pyobjus #SDcard IOS
         Environment = autoclass('android.os.Environment')
         sdpath = Environment.get_running_app().getExternalStorageDirectory()
     except:
