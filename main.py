@@ -21,6 +21,7 @@ from kivy import platform
 from sys import exc_info
 
 
+
 # Screen used by main ScreenManager
 class KanjiOriginScreen(Screen):
     fullscreen = BooleanProperty(False)

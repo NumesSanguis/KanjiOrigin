@@ -7,14 +7,14 @@ BackupSD:
     on_pre_enter: app.root.ids.actp.ac_prev = self.parent
 
     BoxLayoutS:
-        id: backupsd
+        id: backupsdb
         orientation: 'vertical'
 
         Popup:
             id: popbackup
             title: "Backup succeeded"
             on_parent:
-                if self.parent == backupsd: self.parent.remove_widget(self)
+                if self.parent == backupsdb: self.parent.remove_widget(self)
             size_hint: [.9, .7]
 
             BoxLayoutS:

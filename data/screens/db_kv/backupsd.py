@@ -6,7 +6,7 @@ from kivy.app import App
 from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty
 import sqlite3
-from jnius import autoclass  # SDcard Android
+
 
 class BackupSD(Screen):
     lbtext = "Backup the current learning process to your (virtual) SD-card. " \
@@ -18,6 +18,9 @@ class BackupSD(Screen):
 
     # Get path to SD card
     try:
+        # from kivy import platform
+        from jnius import autoclass  # SDcard Android
+        #pyobjus #SDcard IOS
         Environment = autoclass('android.os.Environment')
         sdpath = Environment.get_running_app().getExternalStorageDirectory()
         MediaScannerConnection = autoclass('android.media.MediaScannerConnection')
@@ -25,7 +28,7 @@ class BackupSD(Screen):
         sdpath = App.get_running_app().user_data_dir
     # TODO IOS
 
-    print("Path SD: {}".format(sdpath))
+    #print("Path SD: {}".format(sdpath))
 
     def callback(self):
         print("\nBackuping DB to SD-card...")
