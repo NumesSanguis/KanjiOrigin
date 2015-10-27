@@ -7,7 +7,7 @@ from os.path import dirname, join
 from kivy.lang import Builder
 from kivy.properties import NumericProperty, StringProperty, BooleanProperty,\
     ListProperty, ObjectProperty
-#from kivy.clock import Clock
+from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 #from kivy.uix.behaviors import FocusBehavior
@@ -18,6 +18,7 @@ import data.screens.learnkanji_k_alg as lrnalg
 #from kivy.resources import resource_add_path
 
 from kivy import platform
+from sys import exc_info
 
 
 # Screen used by main ScreenManager
@@ -27,11 +28,18 @@ class KanjiOriginScreen(Screen):
     # If there is a ScreenManager in a ScreenManager
     ac_prev = ObjectProperty(None)
 
+    # def __init__(self, **kwargs):
+    #     super(KanjiOriginScreen, self).__init__(**kwargs)
+    #     self.bind(txt_input_focus = self.TextFocusChange)
+
     # 'content' refers to the id of the GridLayout in KanjiOriginScreen in kanjiorigin.kv
     def add_widget(self, *args):
         if 'content' in self.ids:
             return self.ids.content.add_widget(*args)
         return super(KanjiOriginScreen, self).add_widget(*args)
+    #
+    # def TextFocusChange(self):
+    #     print("Screen TextInput focus: {}".format(self.txt_input_focus))
 
 
 # Main app
@@ -131,8 +139,9 @@ class KanjiOriginApp(App):
 
 
 
-    # Keeps the app running in the background
+    # On App pause
     def on_pause(self):
+        # Keeps the app running in the background
         return True
 
     # App is reopened
@@ -141,6 +150,28 @@ class KanjiOriginApp(App):
         if self.learnalg_count:
             if self.learnalg_count.db_exist:
                 self.actionbar_status = self.learnalg_count.countlearned()
+
+        # Defocus AnswerInput to prevent having to defocus and focus for keyboard
+        try:
+            print("Defocus try")
+            # If in screen Learn Kanji
+            if self.index == 1:
+                print("Before: {}".format(self.screens[1].children[0].children[0].ids.txt_field.focus))
+                # Set AnswerTextInput to False
+                self.screens[1].children[0].children[0].ids.txt_field.focus = False
+                if not self.screens[1].children[0].children[0].answered:
+                    # If answer still has to be given, open keyboard after delay
+                    # (needed for proper functioning)
+                    Clock.schedule_once(lambda dt: self.keyboard_opener(), .2)
+                    #self.screens[1].children[0].children[0].ids.txt_field.focus = True
+                print("After: {}".format(self.screens[1].children[0].children[0].ids.txt_field.focus))
+        except:  # KeyError:
+            print("Defocus AnswerInput failed or not existing")
+            print(exc_info()[0])
+
+    # Open keyboard by setting AnswerTextInput focused
+    def keyboard_opener(self):
+        self.screens[1].children[0].children[0].ids.txt_field.focus = True
 
     # Go to other screen
     def go_screen(self, idx):
@@ -155,6 +186,27 @@ class KanjiOriginApp(App):
             #if idx == 1:
             #    import data.screens.learnkanji
             self.root.ids.sm.switch_to(self.load_screen(idx), direction='left')
+
+
+        # try:
+        #     print("Next Kanji:")
+        #     print(self.screens[1].children[0].children[0].ids.send_btn.text)
+        #     print(self.screens[1].children[0].children[0].answered)  #TODO
+        # except:
+        #     print(exc_info()[0])
+
+        # Defocus AnswerInput to prevent having to defocus and focus for keyboard
+        # try:
+        #     print("Defocus try")
+        #     print(self.screens[1])
+        #     #if self.screens[1].txt_input_focus:
+        #     print("Before: {}".format(self.screens[1].txt_input_focus))
+        #     #self.screens[1].txt_input_focus = True
+        #     self.screens[1].children[0].children[0].ids.txt_field.focus = False
+        #     print("After: {}".format(self.screens[1].txt_input_focus))
+        # except:  # KeyError:
+        #     print("Defocus AnswerInput failed or not existing")
+        #     print(exc_info()[0])
 
     # Load kv file with Builder
     def load_screen(self, index):

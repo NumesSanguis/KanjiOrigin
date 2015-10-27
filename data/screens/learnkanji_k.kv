@@ -107,8 +107,9 @@
 			pos: int(self.center_x - self.texture_size[0] / 2.), int(self.center_y - self.texture_size[1] / 2.)
 		PopMatrix
 
+
 <LayoutFunctioning>
-    id: lfunc
+    id: lfunc  # TODO probably better not here
     orientation: 'vertical'
 
     #Widget with the to be learned Kanji
@@ -183,7 +184,8 @@
             multiline: False
             size_hint_x: .8
             #on_text: self.root.autoCorrectText()
-            focus: lfunc.txt_field_focus_i  # TODO Not used?
+            focus: lfunc.txt_field_focus_i
+            #on_focus: self.txt_field_focus_i = self.focus  # bind goes one way, so change value too
             #on_focus: Clock.schedule_once(lambda dt: lfunc.storykeybheight()) if(args[1]) else False
             #lfunc.storykeybheight() if(args[1]) else False  # TODO run at initialization
             padding: [5, ( self.height - self.line_height ) / 2]
@@ -281,7 +283,7 @@
                 SKanjiToggleButton:
                     id: togglemain
                     #skanjitext: self.text  # lfunc.master_kanji.cur_framekanji  # '好'
-                    lfunc: root
+                    lfunc: lfunc
                     #font_name: lfunc.font_kanji
                     text: lfunc.master_kanji.cur_framekanji
                     radical: False
@@ -300,3 +302,6 @@ KanjiOriginScreen:
     fullscreen: True
 
     LayoutFunctioning
+    #    id: lfunc  # TODO Probably better here
+
+    #txt_input_focus: self.children[0].ids.txt_field.focus
