@@ -17,6 +17,9 @@ from kivy.core.window import Window
 import data.screens.learnkanji_k_alg as lrnalg
 #from kivy.resources import resource_add_path
 
+from kivy import platform
+from sys import exc_info
+
 
 # Screen used by main ScreenManager
 class KanjiOriginScreen(Screen):
@@ -24,6 +27,7 @@ class KanjiOriginScreen(Screen):
     #has_screenmanager = BooleanProperty(False)
     # If there is a ScreenManager in a ScreenManager
     ac_prev = ObjectProperty(None)
+    txt_input_focus = BooleanProperty(False)
 
     # 'content' refers to the id of the GridLayout in KanjiOriginScreen in kanjiorigin.kv
     def add_widget(self, *args):
@@ -45,6 +49,11 @@ class KanjiOriginApp(App):
 
     def build(self):
         self.title = 'Kanji Origin'
+
+        if platform != 'android' and platform != 'ios':
+            from kivy.core.window import Window
+            Window.size = (600, 720)
+
         #Clock.schedule_interval(self._update_clock, 1 / 60.)
 
         # Relative import
@@ -135,6 +144,17 @@ class KanjiOriginApp(App):
             if self.learnalg_count.db_exist:
                 self.actionbar_status = self.learnalg_count.countlearned()
 
+        # Defocus AnswerInput to prevent having to defocus and focus for keyboard
+        try:
+            print("Defocus try")
+            print(self.screens[1])
+            if self.screens[1].ids.txt_field.focus:
+                print("Before: {}".format(self.screens[1].txt_input_focus))
+                self.screens[1].ids.txt_field.focus = False
+                print("After: {}".format(self.screens[1].txt_input_focus))
+        except:
+            print("Defocus AnswerInput failed or not existing")
+
     # Go to other screen
     def go_screen(self, idx):
         print("Change MainScreen to: {}".format(idx))
@@ -148,6 +168,18 @@ class KanjiOriginApp(App):
             #if idx == 1:
             #    import data.screens.learnkanji
             self.root.ids.sm.switch_to(self.load_screen(idx), direction='left')
+
+        # Defocus AnswerInput to prevent having to defocus and focus for keyboard
+        try:
+            print("Defocus try")
+            print(self.screens[1])
+            #if self.screens[1].txt_input_focus:
+            print("Before: {}".format(self.screens[1].txt_input_focus))
+            #self.screens[1].txt_input_focus = False
+            #print("After: {}".format(self.screens[1].txt_input_focus))
+        except:  # KeyError:
+            print("Defocus AnswerInput failed or not existing")
+            print(exc_info()[0])
 
     # Load kv file with Builder
     def load_screen(self, index):

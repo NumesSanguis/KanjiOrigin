@@ -4,6 +4,7 @@
 #:import webbrowser webbrowser
 #:import Clock kivy.clock.Clock
 #:import os os
+#:import platform kivy
 
 # kived code
 #<ScaleLabel@Label>:
@@ -106,9 +107,11 @@
 			pos: int(self.center_x - self.texture_size[0] / 2.), int(self.center_y - self.texture_size[1] / 2.)
 		PopMatrix
 
+
 <LayoutFunctioning>
     id: lfunc
     orientation: 'vertical'
+
 
     #Widget with the to be learned Kanji
 
@@ -182,15 +185,17 @@
             multiline: False
             size_hint_x: .8
             #on_text: self.root.autoCorrectText()
-            focus: lfunc.txt_field_focus_i  # TODO Not used?
+            focus: lfunc.txt_field_focus_i
+            on_focus: app.screens[1].txt_field_focus = self.focus  # bind goes one way, so change value too
             #on_focus: Clock.schedule_once(lambda dt: lfunc.storykeybheight()) if(args[1]) else False
             #lfunc.storykeybheight() if(args[1]) else False  # TODO run at initialization
             padding: [5, ( self.height - self.line_height ) / 2]
             #border: 16, 16, 16, 16  # TODO not working, flash red when wrong
             background_color: (1, .85, .85, 1) if (lfunc.answered and not lfunc.next_kanji) else (1, 1, 1, 1)
             on_text: lfunc.disablesend(False) if self.text != "" and lfunc.send_disabled == True else None
-            on_text_validate: lfunc.btnPressed(txt_field.text)
-            on_text_validate: txt_field.resettext(lfunc.next_kanji)
+            # btnPressed not
+            on_text_validate: lfunc.btnPressed(self.text) if send_btn.disabled == False and (platform == 'android' or platform == 'ios') else None
+            on_text_validate: txt_field.resettext(lfunc.next_kanji) if send_btn.disabled == False else None
 
         ScaleButton:
             id: send_btn
@@ -279,7 +284,7 @@
                 SKanjiToggleButton:
                     id: togglemain
                     #skanjitext: self.text  # lfunc.master_kanji.cur_framekanji  # '好'
-                    lfunc: root
+                    lfunc: lfunc
                     #font_name: lfunc.font_kanji
                     text: lfunc.master_kanji.cur_framekanji
                     radical: False

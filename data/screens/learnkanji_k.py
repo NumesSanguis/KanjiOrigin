@@ -13,6 +13,7 @@ from kivy.event import EventDispatcher
 from kivy.uix.togglebutton import ToggleButton
 from kivy.clock import Clock
 from kivy.core.clipboard import Clipboard
+from kivy import platform
 
 import re
 from collections import deque
@@ -26,7 +27,6 @@ import learnkanji_k_alg
 #from __future__ import unicode_literals  # TODO test if works
 
 #font_kanji = os.path.join('data', 'fonts', 'TakaoPMincho.ttf')
-
 
 from kivy.core.text import LabelBase
 KIVY_FONTS = [
@@ -61,13 +61,22 @@ class AnswerTextInput(TextInput):
             self.text = ""
             self.focus = True
 
-    # def _on_focus(self, instance, value, *largs):
-    #     super(AnswerTextInput, self)._on_focus(instance, value, *largs)
-    #     print("TextInput is focused")
+    def _on_focus(self, instance, value, *largs):
+        super(AnswerTextInput, self)._on_focus(instance, value, *largs)
+        print("TextInput focused: {}".format(value))
+
+        # Probably goes wrong with virtual keyboard
+        # if platform != 'android' and platform != 'ios':
+        #     if not value:
+        #         Clock.schedule_once(lambda dt: self.focus_on())
+
     #     keyb_height = Window.keyboard_height
     #     #print(App.get_running_app().root.ids.story_box.height)
     #     #App.get_running_app().root.ids.story_box.height = keyb_height
 
+    # def focus_on(self):
+    #     print("focus set to True")
+    #     self.focus = True
 
 # Handles everything related to shown Kanji
 class MasterKanji(EventDispatcher):
@@ -444,9 +453,11 @@ class MasterKanji(EventDispatcher):
 
 
 class LayoutFunctioning(BoxLayout):
-
-    # 280 dp, because otherwise maybe keyboard over inputfield
-    keyb_height = NumericProperty(dp(260))  #280  #254
+    if platform != 'android' and platform != 'ios':
+        keyb_height = NumericProperty(dp(300))
+    else:
+        # 280 dp, because otherwise maybe keyboard over inputfield
+        keyb_height = NumericProperty(dp(260))  #280  #254
     print("Keyboard height: {}".format(keyb_height))
 
     font_kanji = "TakaoPMincho"  # os.path.join('data', 'fonts', 'TakaoPMincho.ttf')  # TakaoPMincho.ttf
@@ -459,6 +470,8 @@ class LayoutFunctioning(BoxLayout):
     txt_field_focus_i = BooleanProperty(True)
     if master_kanji.cur_framenum == 0:
         txt_field_focus_i = BooleanProperty(False)
+
+    #asw_ti = AnswerTextInput()
 
     # Send button disabled with no text
     send_disabled = BooleanProperty(True)
@@ -554,10 +567,14 @@ class LayoutFunctioning(BoxLayout):
                 self.keyb_height = keyb_height_change
                 print("Keyb after: {}".format(self.keyb_height))
 
-            # TODO close keyboard when esc or back button
-            #if keycode1 in [27, 1001]:
-            #    print("close keyboard")
-            #    self.txt_field_focus_i = BooleanProperty(False)
+        # TODO accept enter als button press
+        if keycode1 == 13:
+            #print("Enter pressed")
+            # Replaces text_input enter
+            if self.ids.send_btn.disabled == False and platform != 'android' and platform != 'ios':
+                self.ids.send_btn.dispatch('on_release')
+           #self.asw_ti.text = 'test'
+           #self.txt_field_focus_i = BooleanProperty(False)
 
     # def storykeybheight(self, *args):
     #     print("storykeybheight")
