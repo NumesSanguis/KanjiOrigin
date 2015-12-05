@@ -11,7 +11,7 @@ import sqlite3
 
 class RestoreSD(Screen):
     lbtext = "Restore a learning process backup from SD-card." \
-             "The app looks in sdcard/KanjiOrigin/ for Kanji-story_bak.db."
+             "The app looks in sdcard/KanjiOrigin/ for 'Kanji-story_bak.db'."
     bttext = "Restore learning process"
     poplbtext = "Are you sure you wish to overwrite the current learning process " \
                 "by your backup on the SD card?\n\n" \
@@ -218,6 +218,13 @@ class RestoreSD(Screen):
                 c.execute("INSERT INTO main.learnAlg SELECT * FROM db2.learnAlg")
                 print("Table 'learnAlg' transferred")
                 print("Backup data transferred.")
+
+            # Repair insane spacing v0.3.1
+            # old_decay = 0.00000082
+            # #new_decay = old_decay * 5
+            # c.execute("UPDATE learnAlg SET decay={}, timeseen={}, timelearn={}, "
+            #           "prevcorrect=0 WHERE decay < {} AND framenum != 0 AND xseen != prevcorrect"
+            #           .format(old_decay, time(), time(), old_decay))
 
             # Save change to database
             conn.commit()

@@ -1,0 +1,28 @@
+.. _top:
+
+Credits
+=======
+
+**App developer:** Stef van der Struijk
+
+Thanks to the following people / organizations:
+
+**Learning algorithm mathemagic:** Robert Kübler
+
+**Kanji sequence:** Heisig index by James W. Heisig from the book: *Remembering the Kanji*, 6th edition
+
+**Software:** Python & Kivy
+
+**Kivy team on IRC**, server: Freenode, channel: #kivy
+
+**Kivy website:** http://kivy.org/
+
+**Kanji Mnemonics:** http://kanji.koohii.com/ and it\'s users
+
+**App Alpha testers:**
+
+* Gustavo Shinji Inoue
+* Melli
+* Robert Kübler
+* Tao
+* Tikalarask

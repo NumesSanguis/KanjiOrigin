@@ -1,23 +1,13 @@
+#:kivy 1.9.1
+#:import join os.path.join
+
 KanjiOriginScreen:
     name: 'Credits'
     fullscreen: True
     #on_parent: if not args[1]: textinput.focus = False
 
     RstDocument:
-        base_font_size: 28 + self.height*.005  # default 31
-        text:
-            ('.. _top:\n'
-            '\n'
-            'Credits\n'
-            '=======\n'
-            '\n'
-            '**App developer:** Stef van der Struijk\n\n'
-            'Thanks to the following people / organizations:\n\n'
-            '**Learning algorithm mathemagic:** Robert Kübler\n\n'
-            '**Software:** Python & Kivy\n\n'
-            '**Kivy team on IRC**, server: Freenode, channel: #kivy\n\n'
-            '**Kivy website:** http://kivy.org/\n\n'
-            '**Kanji Mnemonics:** http://kanji.koohii.com/ and it\'s users\n\n'
-            '**App Alpha testers:**\n\n'
-            '* Robert Kübler\n'
-            '* Need testers')
+        #base_font_size: 28 + self.height*.005  # default 31
+        # - to make it even for computer screens (base_font_size is already in sp)
+        base_font_size: 28 + self.height*.015 - sp(self.height*.005)
+        text: open(join('data', 'screens', 'txt', 'credits.txt')).read()

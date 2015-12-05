@@ -1,0 +1,6 @@
+.. _top:
+
+Learning Method
+===============
+
+*Why this learning method is effective*.

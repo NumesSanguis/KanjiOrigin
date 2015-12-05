@@ -29,7 +29,7 @@ source.exclude_dirs = bin
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.3.0
+version = 0.3.2
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
@@ -47,7 +47,7 @@ requirements = kivy==master,sqlite3,docutils
 #presplash.filename = %(source.dir)s/data/presplash.png
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/data/icon.png
+#icon.filename = %(source.dir)s/ko.png  # %(source.dir)s/data/icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
@@ -64,13 +64,13 @@ fullscreen = 0
 #android.permissions = INTERNET
 
 # (int) Android API to use
-android.api = 14
+android.api = 19
 
 # (int) Minimum API required (8 = Android 2.2 devices)
 android.minapi = 8
 
 # (int) Android SDK version to use
-#android.sdk = 21
+android.sdk = 21
 
 # (str) Android NDK version to use
 #android.ndk = 9c

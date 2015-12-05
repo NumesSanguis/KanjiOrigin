@@ -21,19 +21,17 @@ BackupSD:
                 spacing: '14dp'
                 orientation: 'vertical'
 
-                RstDocument:
+                DBinfoPop:
                     text: root.poplbtext
                     size_hint_y: .7
-                    base_font_size: 28 + self.height*.01  # default 31
 
                 ScaleButton:
                     text: 'Close'
                     on_release: popbackup.dismiss()
                     size_hint_y: .3
 
-        RstDocument:
+        DBinfo:
             text: root.lbtext
-            base_font_size: 28 + self.height*.005  # default 31
 
         ScaleButton:
             text: root.bttext

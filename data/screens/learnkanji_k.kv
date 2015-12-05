@@ -109,9 +109,8 @@
 
 
 <LayoutFunctioning>
-    id: lfunc
+    id: lfunc  # TODO probably better not here
     orientation: 'vertical'
-
 
     #Widget with the to be learned Kanji
 
@@ -160,15 +159,21 @@
 
 
     #A button with the correct answers (hidden at first)
-    ScaleButton:
+    ScaleLabel:
         id: answer_bar
         size_hint: 1, 0.09
         font_size: self.height *.6  # if self.texture_size[0] < self.width else
         # if self.texture_size[0] < self.width else self.height*.8  # (self.width*2)/(self.height+0.1)  # '16sp'
         text: ', '.join(lfunc.master_kanji.cur_answer)
-        background_color: (0, 0.7, 0, 1) if lfunc.next_kanji else (0.7, 0, 0, 1)
+        #background_color: (0, 0.7, 0, 1) if lfunc.next_kanji else (0.7, 0, 0, 1)
         opacity: 1 if lfunc.answered else 0
         padding: [dp(20), dp(10)]
+        canvas.before:
+            Color:
+                rgba: (0, 0.3, 0, 1) if lfunc.next_kanji else (0.3, 0, 0, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
 
     #Containing the text-input widget and send button
     BoxLayout:
@@ -186,7 +191,7 @@
             size_hint_x: .8
             #on_text: self.root.autoCorrectText()
             focus: lfunc.txt_field_focus_i
-            on_focus: app.screens[1].txt_field_focus = self.focus  # bind goes one way, so change value too
+            #on_focus: self.txt_field_focus_i = self.focus  # bind goes one way, so change value too
             #on_focus: Clock.schedule_once(lambda dt: lfunc.storykeybheight()) if(args[1]) else False
             #lfunc.storykeybheight() if(args[1]) else False  # TODO run at initialization
             padding: [5, ( self.height - self.line_height ) / 2]
@@ -303,3 +308,6 @@ KanjiOriginScreen:
     fullscreen: True
 
     LayoutFunctioning
+    #    id: lfunc  # TODO Probably better here
+
+    #txt_input_focus: self.children[0].ids.txt_field.focus

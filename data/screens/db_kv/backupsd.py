@@ -10,7 +10,7 @@ import sqlite3
 
 class BackupSD(Screen):
     lbtext = "Backup the current learning process to your (virtual) SD-card. " \
-             "Backup is saved in sdcard/KanjiOrigin/ as Kanji-story_bak.db. " \
+             "Backup is saved in sdcard/KanjiOrigin/ as 'Kanji-story_bak.db'. " \
              "This backup is not directly detected by your computer, you first have to restart your phone. " \
              "Fix is planned for later."
     bttext = "Backup learning process"

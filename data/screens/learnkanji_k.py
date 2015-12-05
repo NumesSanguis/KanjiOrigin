@@ -468,6 +468,7 @@ class LayoutFunctioning(BoxLayout):
     master_kanji = MasterKanji()
 
     txt_field_focus_i = BooleanProperty(True)
+
     if master_kanji.cur_framenum == 0:
         txt_field_focus_i = BooleanProperty(False)
 

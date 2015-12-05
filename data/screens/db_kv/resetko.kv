@@ -22,7 +22,7 @@ ResetKO:
             BoxLayoutS:
                 orientation: 'vertical'
 
-                RstDocument:
+                DBinfoPop:
                     text: root.poplbtext
                     size_hint_y: .7
                     base_font_size: 28 + self.height*.01  # default 31
@@ -50,7 +50,7 @@ ResetKO:
             BoxLayoutS:
                 orientation: 'vertical'
 
-                RstDocument:
+                DBinfoPop:
                     text: root.popurstext
                     size_hint_y: .7
                     base_font_size: 28 + self.height*.01  # default 31
@@ -78,7 +78,7 @@ ResetKO:
             BoxLayoutS:
                 orientation: 'vertical'
 
-                RstDocument:
+                DBinfoPop:
                     text: root.popfailtext
                     size_hint_y: .7
                     base_font_size: 28 + self.height*.01  # default 31
@@ -88,7 +88,7 @@ ResetKO:
                     on_release: popfail.dismiss()
                     size_hint_y: .3
 
-        RstDocument:
+        DBinfo:
             text: root.lbtext
             base_font_size: 28 + self.height*.005  # default 31
 
